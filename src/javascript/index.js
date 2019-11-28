@@ -23,19 +23,52 @@ window.onload = () => {
     }
     let city = data.city;
     let country = countryNames[data.country];
-    console.log(city, country);
+    document.querySelector(".currentWeather").innerHTML = `${city},${country}`;
   }
 
-  getLocation();
+  //getLocation();
 
   function success(pos) {
     var crd = pos.coords;
     latitude = crd.latitude.toFixed(2);
     longitude = crd.longitude.toFixed(2);
-    map.setCenter([longitude, latitude])
+    getLocationCity();
+    map.setCenter([longitude, latitude]);
+    document.querySelector(".coordinates").insertAdjacentHTML('afterbegin', `<div>Latitude: ${Math.trunc(latitude)}°</div><div>Longitude: ${longitude.toString().slice(3)}'</div>`);
   };
   
   navigator.geolocation.getCurrentPosition(success);
+
+  async function getLocationCity(){
+    const url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${opencagedataAPIkey}&language=en`;
+    let data;
+    try {
+      const response = await fetch(url);
+      data = await response.json();
+    } catch (e) {
+      console.error(e);
+    }
+    let city = data.results[0].components.city;
+    let country = data.results[0].components.country;
+    document.querySelector(".currentWeather").innerHTML = `${city}, ${country}`;
+    getCurrentWeather(city);
+  }
+
+  async function getCurrentWeather(city){
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&lang=en&units=metric&APPID=${openWeatherAPIkey}`;
+    let data;
+    try {
+      const response = await fetch(url);
+      data = await response.json();
+      console.log(data);
+    } catch (e) {
+      console.error(e);
+    }
+    let temperature = data.main.temp;
+    let wind = data.wind.speed;
+    let humidity = data.main.humidity;
+    console.log(temperature, wind, humidity);
+  }
 
   mapboxgl.accessToken = mapboxToken;
   var map = new mapboxgl.Map({

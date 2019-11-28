@@ -360,11 +360,66 @@ body {
 .wrapper {
   box-sizing: border-box;
   margin: 0 auto;
+  display: flex;
+  padding: 3% 5%;
+}
+
+.column {
+  height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+}
+.column.left {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+}
+.column.left .options {
+  height: 10%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.column.left .options input {
+  height: 40px;
+  width: 40px;
+}
+.column.left .options select {
+  width: 60px;
+  height: 40px;
+  margin-right: 10px;
+}
+.column.left .options input[class=refresh] {
+  background-color: black;
+  background-image: url(images/689efaff758bbe0f32b0e5b152b49c2b.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  padding: 5px;
+  border: none;
+  margin-right: 10px;
+}
+.column.right {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+}
+.column.right .cityInput {
+  display: flex;
+  margin-bottom: 2%;
+}
+.column.right .cityInput input[type=submit] {
+  margin: 0;
+}
+.column.right .coordinates {
+  margin-top: 2%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 #map {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 40%;
+  width: 100%;
+  height: 70%;
 }
