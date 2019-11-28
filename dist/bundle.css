@@ -374,6 +374,7 @@ body {
   width: 60%;
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
 }
 .column.left .options {
   height: 10%;
@@ -400,10 +401,25 @@ body {
   border: none;
   margin-right: 10px;
 }
+.column.left .location {
+  font-size: 30px;
+  text-transform: uppercase;
+}
+.column.left .currentWeather {
+  display: flex;
+  text-transform: uppercase;
+}
+.column.left .currentWeather--temperature {
+  font-size: 140px;
+}
+.column.left .currentWeather--overcast {
+  font-size: 24px;
+}
 .column.right {
   width: 40%;
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
 }
 .column.right .cityInput {
   display: flex;

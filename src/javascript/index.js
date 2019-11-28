@@ -5,6 +5,7 @@ import markup from './markup.js';
 
 var latitude;
 var longitude;
+var date;
 
 window.onload = () => {
 
@@ -35,6 +36,11 @@ window.onload = () => {
     getLocationCity();
     map.setCenter([longitude, latitude]);
     document.querySelector(".coordinates").insertAdjacentHTML('afterbegin', `<div>Latitude: ${Math.trunc(latitude)}°</div><div>Longitude: ${longitude.toString().slice(3)}'</div>`);
+
+    var unixDate = new Date(pos.timestamp);
+    var hours = unixDate.getHours();
+    var minutes = unixDate.getMinutes();
+    date = `${hours}:${minutes}`;
   };
   
   navigator.geolocation.getCurrentPosition(success);
@@ -50,7 +56,7 @@ window.onload = () => {
     }
     let city = data.results[0].components.city;
     let country = data.results[0].components.country;
-    document.querySelector(".currentWeather").innerHTML = `${city}, ${country}`;
+    document.querySelector(".location").innerHTML += `${city}, ${country}`;
     getCurrentWeather(city);
   }
 
@@ -60,14 +66,14 @@ window.onload = () => {
     try {
       const response = await fetch(url);
       data = await response.json();
-      console.log(data);
     } catch (e) {
       console.error(e);
     }
     let temperature = data.main.temp;
-    let wind = data.wind.speed;
-    let humidity = data.main.humidity;
-    console.log(temperature, wind, humidity);
+    let wind = `${data.wind.speed} m/s`;
+    let humidity = `${data.main.humidity}%`;
+    document.querySelector(".currentWeather--temperature").innerHTML += temperature;
+    document.querySelector(".currentWeather--overcast").insertAdjacentHTML('afterbegin', `<div>Overcast</div><div>Feels like: </div><div>Wind: ${wind}</div><div>Humidity: ${humidity}</div>`);
   }
 
   mapboxgl.accessToken = mapboxToken;

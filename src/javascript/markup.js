@@ -9,8 +9,13 @@ let markup = `<div class="column left">
     <input type="submit" name="tempF" class="tempF" value="°F">
     <input type="submit" name="tempC" class="tempC" value="°C">
   </div>
+  <div class="location"></div>
   <div class="currentWeather">
-  </div></div>  
+    <div class="currentWeather--temperature"></div>
+    <div class="currentWeather--image"></div>
+    <div class="currentWeather--overcast"></div>
+  </div>
+  <div class="weatherForecast"></div>  </div>  
   <div class="column right">
     <div class="cityInput">
       <input type="text" name="city" placeholder="Search city">
