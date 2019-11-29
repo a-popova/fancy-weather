@@ -42,6 +42,7 @@ window.onload = () => {
     let arr = unixDate.toString().split(" ");
     let date = `${arr[0]} ${arr[2]} ${arr[1]}`;
     let time = arr[4].slice(0, 5);
+    document.querySelector('.date').innerHTML += `${date}  ${time}`;
   };
   
   navigator.geolocation.getCurrentPosition(success);
@@ -70,12 +71,31 @@ window.onload = () => {
     } catch (e) {
       console.error(e);
     }
-    
+    console.log(data.daily.data);
+    let dayOne = data.daily.data[2];
+    let dayTwo = data.daily.data[3];
+    let dayThree = data.daily.data[4];
+    let dayOneTemp = Math.round((dayOne.temperatureMax + dayOne.temperatureMin) / 2);
+    let dayTwoTemp = Math.round((dayTwo.temperatureMax + dayTwo.temperatureMin) / 2);
+    let dayThreeTemp = Math.round((dayThree.temperatureMax + dayThree.temperatureMin) / 2);
+    document.querySelector('.threeDaysWeather').insertAdjacentHTML('afterbegin', `<div>${dayOneTemp}°</div><div>${dayTwoTemp}°</div><div>${dayThreeTemp}°</div>`)
+    // let dayOneUnixDate = new Date(dayOne.time);
+    // let dayOneDate = dayOneUnixDate.getDay();
+    let days = [dayOne, dayTwo, dayThree];
+    let weekdays = [];
+    days.forEach(function(day){
+        var unixDate = new Date(day.time);
+        var weekDay = unixDate.getDay();
+        weekdays.push(weekDay);
+        console.log(weekdays);
+    })
+    console.log(weekdays);
+
     let temperature = Math.round(data.currently.temperature);
     let apparentTemp = Math.round(data.currently.apparentTemperature);
     let wind = `${data.currently.windSpeed} m/s`;
-    let humidity = `${data.currently.humidity}%`;
-    document.querySelector(".currentWeather--temperature").innerHTML += temperature;
+    let humidity = `${data.currently.humidity * 100}%`;
+    document.querySelector(".currentWeather--temperature").innerHTML += `${temperature}°`;
     document.querySelector(".currentWeather--overcast").insertAdjacentHTML('afterbegin', `<div>Overcast</div><div>Feels like: ${apparentTemp}</div><div>Wind: ${wind}</div><div>Humidity: ${humidity}</div>`);
   }
 

@@ -61,14 +61,29 @@ body {
             font-size: 30px;
             text-transform: uppercase;
         }
+        & .date {
+            font-size: 22px;
+        }
         & .currentWeather {
             display: flex;
+            align-items: center;
+            justify-content: flex-start;
             text-transform: uppercase;
             &--temperature {
                 font-size: 140px;
+                margin-right: 5%;
             }
             &--overcast {
                 font-size: 24px;
+            }
+        }
+        & .threeDaysWeather {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            & div {
+                margin-right: 7%;
+                font-size: 70px;
             }
         }
     }

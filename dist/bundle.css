@@ -405,15 +405,30 @@ body {
   font-size: 30px;
   text-transform: uppercase;
 }
+.column.left .date {
+  font-size: 22px;
+}
 .column.left .currentWeather {
   display: flex;
+  align-items: center;
+  justify-content: flex-start;
   text-transform: uppercase;
 }
 .column.left .currentWeather--temperature {
   font-size: 140px;
+  margin-right: 5%;
 }
 .column.left .currentWeather--overcast {
   font-size: 24px;
+}
+.column.left .threeDaysWeather {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.column.left .threeDaysWeather div {
+  margin-right: 7%;
+  font-size: 70px;
 }
 .column.right {
   width: 40%;
