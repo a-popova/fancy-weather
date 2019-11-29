@@ -71,23 +71,20 @@ window.onload = () => {
     } catch (e) {
       console.error(e);
     }
-    console.log(data.daily.data);
+    console.log(data.daily);
     let dayOne = data.daily.data[2];
     let dayTwo = data.daily.data[3];
     let dayThree = data.daily.data[4];
     let dayOneTemp = Math.round((dayOne.temperatureMax + dayOne.temperatureMin) / 2);
     let dayTwoTemp = Math.round((dayTwo.temperatureMax + dayTwo.temperatureMin) / 2);
     let dayThreeTemp = Math.round((dayThree.temperatureMax + dayThree.temperatureMin) / 2);
-    document.querySelector('.threeDaysWeather').insertAdjacentHTML('afterbegin', `<div>${dayOneTemp}°</div><div>${dayTwoTemp}°</div><div>${dayThreeTemp}°</div>`)
-    // let dayOneUnixDate = new Date(dayOne.time);
-    // let dayOneDate = dayOneUnixDate.getDay();
+    document.querySelector('.threeDaysWeather').insertAdjacentHTML('afterbegin', `<div>${dayOneTemp}°</div><div>${dayTwoTemp}°</div><div>${dayThreeTemp}°</div>`);
     let days = [dayOne, dayTwo, dayThree];
     let weekdays = [];
     days.forEach(function(day){
-        var unixDate = new Date(day.time);
+        var unixDate = new Date(day.time * 1000);
         var weekDay = unixDate.getDay();
         weekdays.push(weekDay);
-        console.log(weekdays);
     })
     console.log(weekdays);
 
