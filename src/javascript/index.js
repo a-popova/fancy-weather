@@ -1,5 +1,5 @@
 import '../sass/styles.scss';
-import {ipinfoToken, openWeatherAPIkey, flickrAPIkey, flickrSecret, mapboxToken, opencagedataAPIkey} from './apikeys.js';
+import {ipinfoToken, openWeatherAPIkey, darkskyAPIkey, flickrAPIkey, flickrSecret, mapboxToken, opencagedataAPIkey} from './apikeys.js';
 import {countryNames} from './countrynames.js';
 import markup from './markup.js';
 
@@ -35,6 +35,7 @@ window.onload = () => {
     longitude = crd.longitude.toFixed(2);
     getLocationCity();
     map.setCenter([longitude, latitude]);
+    getForecast(latitude, longitude);
     document.querySelector(".coordinates").insertAdjacentHTML('afterbegin', `<div>Latitude: ${Math.trunc(latitude)}°</div><div>Longitude: ${longitude.toString().slice(3)}'</div>`);
 
     var unixDate = new Date(pos.timestamp);
@@ -57,24 +58,38 @@ window.onload = () => {
     let city = data.results[0].components.city;
     let country = data.results[0].components.country;
     document.querySelector(".location").innerHTML += `${city}, ${country}`;
-    getCurrentWeather(city);
+    // getCurrentWeather(city);
   }
 
-  async function getCurrentWeather(city){
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&lang=en&units=metric&APPID=${openWeatherAPIkey}`;
-    let data;
+  async function getForecast(lat, lon){
+    var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    var targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${lat},${lon}?lang=en`;
     try {
-      const response = await fetch(url);
-      data = await response.json();
+      const response = await fetch(proxyUrl + targetUrl);
+      let data = await response.json();
+      console.log(data);
     } catch (e) {
       console.error(e);
     }
-    let temperature = data.main.temp;
-    let wind = `${data.wind.speed} m/s`;
-    let humidity = `${data.main.humidity}%`;
-    document.querySelector(".currentWeather--temperature").innerHTML += temperature;
-    document.querySelector(".currentWeather--overcast").insertAdjacentHTML('afterbegin', `<div>Overcast</div><div>Feels like: </div><div>Wind: ${wind}</div><div>Humidity: ${humidity}</div>`);
   }
+
+
+  // async function getCurrentWeather(city){
+  //   const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&lang=en&units=metric&APPID=${openWeatherAPIkey}`;
+  //   let data;
+  //   try {
+  //     const response = await fetch(url);
+  //     data = await response.json();
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  //   console.log(data)
+  //   let temperature = data.main.temp;
+  //   let wind = `${data.wind.speed} m/s`;
+  //   let humidity = `${data.main.humidity}%`;
+  //   document.querySelector(".currentWeather--temperature").innerHTML += temperature;
+  //   document.querySelector(".currentWeather--overcast").insertAdjacentHTML('afterbegin', `<div>Overcast</div><div>Feels like: </div><div>Wind: ${wind}</div><div>Humidity: ${humidity}</div>`);
+  // }
 
   mapboxgl.accessToken = mapboxToken;
   var map = new mapboxgl.Map({
