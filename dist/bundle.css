@@ -421,14 +421,21 @@ body {
 .column.left .currentWeather--overcast {
   font-size: 24px;
 }
-.column.left .threeDaysWeather {
+.column.left .weatherForecast {
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
+  flex-direction: column;
 }
-.column.left .threeDaysWeather div {
+.column.left .weatherForecast--days, .column.left .weatherForecast--temp {
+  display: flex;
+}
+.column.left .weatherForecast--days div, .column.left .weatherForecast--temp div {
   margin-right: 7%;
+  font-size: 40px;
+}
+.column.left .weatherForecast--temp div {
   font-size: 70px;
+  margin-right: 10%;
+  margin-left: 5%;
 }
 .column.right {
   width: 40%;
@@ -448,6 +455,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  font-size: 20px;
 }
 
 #map {

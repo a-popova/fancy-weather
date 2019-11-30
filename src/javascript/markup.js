@@ -16,7 +16,10 @@ let markup = `<div class="column left">
     <div class="currentWeather--image"></div>
     <div class="currentWeather--overcast"></div>
   </div>
-  <div class="threeDaysWeather"></div>
+  <div class="weatherForecast">
+    <div class="weatherForecast--days"></div>
+    <div class="weatherForecast--temp"></div>
+  </div>
   <div class="weatherForecast"></div>  </div>  
   <div class="column right">
     <div class="cityInput">

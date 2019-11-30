@@ -78,15 +78,15 @@ window.onload = () => {
     let dayOneTemp = Math.round((dayOne.temperatureMax + dayOne.temperatureMin) / 2);
     let dayTwoTemp = Math.round((dayTwo.temperatureMax + dayTwo.temperatureMin) / 2);
     let dayThreeTemp = Math.round((dayThree.temperatureMax + dayThree.temperatureMin) / 2);
-    document.querySelector('.threeDaysWeather').insertAdjacentHTML('afterbegin', `<div>${dayOneTemp}°</div><div>${dayTwoTemp}°</div><div>${dayThreeTemp}°</div>`);
+    document.querySelector('.weatherForecast--temp').insertAdjacentHTML('afterbegin', `<div>${dayOneTemp}°</div><div>${dayTwoTemp}°</div><div>${dayThreeTemp}°</div>`);
     let days = [dayOne, dayTwo, dayThree];
-    let weekdays = [];
+    let weekdaysNumbers = [];
     days.forEach(function(day){
         var unixDate = new Date(day.time * 1000);
         var weekDay = unixDate.getDay();
-        weekdays.push(weekDay);
+        weekdaysNumbers.push(weekDay);
     })
-    console.log(weekdays);
+    defineWeekday(weekdaysNumbers);
 
     let temperature = Math.round(data.currently.temperature);
     let apparentTemp = Math.round(data.currently.apparentTemperature);
@@ -94,6 +94,25 @@ window.onload = () => {
     let humidity = `${data.currently.humidity * 100}%`;
     document.querySelector(".currentWeather--temperature").innerHTML += `${temperature}°`;
     document.querySelector(".currentWeather--overcast").insertAdjacentHTML('afterbegin', `<div>Overcast</div><div>Feels like: ${apparentTemp}</div><div>Wind: ${wind}</div><div>Humidity: ${humidity}</div>`);
+  }
+
+  function defineWeekday (number) {
+    let weekdaysTable = {
+      0: 'Sunday',
+      1: 'Monday',
+      2: 'Tuesday',
+      3: 'Wednesday',
+      4: 'Thursday',
+      5: 'Friday',
+      6: 'Saturday'
+    }
+    if (Array.isArray(number)) {
+      number.forEach((number) => {
+        let weekday = weekdaysTable[number];
+        document.querySelector('.weatherForecast--days').insertAdjacentHTML('afterbegin', `<div>${weekday}</div>`);
+      })
+    }
+
   }
 
   mapboxgl.accessToken = mapboxToken;
