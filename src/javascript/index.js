@@ -2,6 +2,7 @@ import '../sass/styles.scss';
 import {ipinfoToken, openWeatherAPIkey, darkskyAPIkey, flickrAPIkey, flickrSecret, mapboxToken, opencagedataAPIkey} from './apikeys.js';
 import {countryNames} from './countrynames.js';
 import markup from './markup.js';
+import icons from "./icons";
 
 var latitude;
 var longitude;
@@ -26,8 +27,6 @@ window.onload = () => {
     let country = countryNames[data.country];
     document.querySelector(".currentWeather").innerHTML = `${city},${country}`;
   }
-
-  //getLocation();
 
   function success(pos) {
     var crd = pos.coords;
@@ -71,7 +70,7 @@ window.onload = () => {
     } catch (e) {
       console.error(e);
     }
-    console.log(data.daily);
+    console.log(data);
     let dayOne = data.daily.data[2];
     let dayTwo = data.daily.data[3];
     let dayThree = data.daily.data[4];
@@ -87,6 +86,7 @@ window.onload = () => {
         weekdaysNumbers.push(weekDay);
     })
     defineWeekday(weekdaysNumbers);
+    loadWeatherIcons(data);
 
     let temperature = Math.round(data.currently.temperature);
     let apparentTemp = Math.round(data.currently.apparentTemperature);
@@ -94,6 +94,14 @@ window.onload = () => {
     let humidity = `${data.currently.humidity * 100}%`;
     document.querySelector(".currentWeather--temperature").innerHTML += `${temperature}°`;
     document.querySelector(".currentWeather--overcast").insertAdjacentHTML('afterbegin', `<div>Overcast</div><div>Feels like: ${apparentTemp}</div><div>Wind: ${wind}</div><div>Humidity: ${humidity}</div>`);
+  }
+
+  function loadWeatherIcons (forecast) {
+    let currentWeather = document.querySelector('.currentWeather--image');
+    let iconName = forecast.currently.icon;
+    let iconURL = icons[iconName];
+    currentWeather.style.background = `url(/dist/${iconURL})`;
+    currentWeather.style.backgroundSize = "cover";
   }
 
   function defineWeekday (number) {

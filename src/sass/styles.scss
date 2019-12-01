@@ -18,8 +18,51 @@ body {
 .wrapper {
     box-sizing: border-box;
     margin: 0 auto;
-    display: flex;
     padding: 3% 5%;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .options{
+        height: 10%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        & input{
+            height: 40px;
+            width: 40px;
+        }
+        & select {
+            width: 60px;
+            height: 40px;
+            margin-right: 10px;
+        }
+        & input[class=refresh] {
+            background-color: black;
+            background-image: url(../images/refresh_icon.png);
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-origin: content-box;
+            padding: 5px;
+            border: none;
+            margin-right: 10px;
+        }
+        & .cityInput {
+            display: flex;
+            margin-bottom: 2%;
+            input[type=submit]{
+                margin: 0;
+            }
+        }
+    }
+}
+
+.main {
+    display: flex;
+    box-sizing: border-box;
+    width: 100%;
 }
 
 .column {
@@ -32,31 +75,6 @@ body {
         display: flex;
         flex-direction: column;
         justify-content: space-around;
-        .options{
-            height: 10%;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            & input{
-                height: 40px;
-                width: 40px;
-            }
-            & select {
-                width: 60px;
-                height: 40px;
-                margin-right: 10px;
-            }
-            & input[class=refresh] {
-                background-color: black;
-                background-image: url(../images/refresh_icon.png);
-                background-size: contain;
-                background-repeat: no-repeat;
-                background-origin: content-box;
-                padding: 5px;
-                border: none;
-                margin-right: 10px;
-            }
-        }
         & .location {
             font-size: 30px;
             text-transform: uppercase;
@@ -72,6 +90,11 @@ body {
             &--temperature {
                 font-size: 140px;
                 margin-right: 5%;
+            }
+            &--image {
+                background-size: cover;
+                width: 100px;
+                height: 100px;
             }
             &--overcast {
                 font-size: 24px;
@@ -102,13 +125,6 @@ body {
         display: flex;
         flex-direction: column;
         justify-content: space-around;
-        & .cityInput {
-            display: flex;
-            margin-bottom: 2%;
-            input[type=submit]{
-                margin: 0;
-            }
-        }
         & .coordinates {
             margin-top: 2%;
             display: flex;

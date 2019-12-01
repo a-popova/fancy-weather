@@ -360,8 +360,51 @@ body {
 .wrapper {
   box-sizing: border-box;
   margin: 0 auto;
-  display: flex;
   padding: 3% 5%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header .options {
+  height: 10%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.header .options input {
+  height: 40px;
+  width: 40px;
+}
+.header .options select {
+  width: 60px;
+  height: 40px;
+  margin-right: 10px;
+}
+.header .options input[class=refresh] {
+  background-color: black;
+  background-image: url(images/689efaff758bbe0f32b0e5b152b49c2b.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  padding: 5px;
+  border: none;
+  margin-right: 10px;
+}
+.header .options .cityInput {
+  display: flex;
+  margin-bottom: 2%;
+}
+.header .options .cityInput input[type=submit] {
+  margin: 0;
+}
+
+.main {
+  display: flex;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .column {
@@ -375,31 +418,6 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-}
-.column.left .options {
-  height: 10%;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-.column.left .options input {
-  height: 40px;
-  width: 40px;
-}
-.column.left .options select {
-  width: 60px;
-  height: 40px;
-  margin-right: 10px;
-}
-.column.left .options input[class=refresh] {
-  background-color: black;
-  background-image: url(images/689efaff758bbe0f32b0e5b152b49c2b.png);
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-origin: content-box;
-  padding: 5px;
-  border: none;
-  margin-right: 10px;
 }
 .column.left .location {
   font-size: 30px;
@@ -417,6 +435,11 @@ body {
 .column.left .currentWeather--temperature {
   font-size: 140px;
   margin-right: 5%;
+}
+.column.left .currentWeather--image {
+  background-size: cover;
+  width: 100px;
+  height: 100px;
 }
 .column.left .currentWeather--overcast {
   font-size: 24px;
@@ -442,13 +465,6 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-}
-.column.right .cityInput {
-  display: flex;
-  margin-bottom: 2%;
-}
-.column.right .cityInput input[type=submit] {
-  margin: 0;
 }
 .column.right .coordinates {
   margin-top: 2%;
