@@ -97,11 +97,18 @@ window.onload = () => {
   }
 
   function loadWeatherIcons (forecast) {
-    let currentWeather = document.querySelector('.currentWeather--image');
+    console.log(forecast.daily.data)
     let iconName = forecast.currently.icon;
     let iconURL = icons[iconName];
+    let currentWeather = document.querySelector('.currentWeather--image');
     currentWeather.style.background = `url(/dist/${iconURL})`;
     currentWeather.style.backgroundSize = "cover";
+    let weatherForecast = document.querySelector('.weatherForecast--images');
+    for (let i = 2; i <= 4; i++){
+      iconName = forecast.daily.data[i].icon;
+      iconURL = icons[iconName];
+      weatherForecast.insertAdjacentHTML('beforeend', `<img src="/dist/${iconURL}">`)
+    }
   }
 
   function defineWeekday (number) {

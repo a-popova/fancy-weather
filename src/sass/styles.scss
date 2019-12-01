@@ -87,14 +87,18 @@ body {
             align-items: center;
             justify-content: flex-start;
             text-transform: uppercase;
+            position: relative;
             &--temperature {
                 font-size: 140px;
-                margin-right: 5%;
+                margin-right: 10%;
             }
             &--image {
                 background-size: cover;
-                width: 100px;
-                height: 100px;
+                width: 120px;
+                height: 120px;
+                position: absolute;
+                left: 13%;
+                top: -20%;
             }
             &--overcast {
                 font-size: 24px;
@@ -114,7 +118,15 @@ body {
             &--temp {
                 div {
                     font-size: 70px;
-                    margin-right: 10%;
+                    margin-right: 14%;
+                    margin-left: 5%;
+                }
+            }
+            &--images {
+                img {
+                    height: 80px;
+                    width: 80px;
+                    margin-right: 12%;
                     margin-left: 5%;
                 }
             }
