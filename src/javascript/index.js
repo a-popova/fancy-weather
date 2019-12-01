@@ -70,10 +70,9 @@ window.onload = () => {
     } catch (e) {
       console.error(e);
     }
-    console.log(data);
-    let dayOne = data.daily.data[2];
-    let dayTwo = data.daily.data[3];
-    let dayThree = data.daily.data[4];
+    let dayOne = data.daily.data[1];
+    let dayTwo = data.daily.data[2];
+    let dayThree = data.daily.data[3];
     let dayOneTemp = Math.round((dayOne.temperatureMax + dayOne.temperatureMin) / 2);
     let dayTwoTemp = Math.round((dayTwo.temperatureMax + dayTwo.temperatureMin) / 2);
     let dayThreeTemp = Math.round((dayThree.temperatureMax + dayThree.temperatureMin) / 2);
@@ -83,6 +82,7 @@ window.onload = () => {
     days.forEach(function(day){
         var unixDate = new Date(day.time * 1000);
         var weekDay = unixDate.getDay();
+        console.log(weekDay);
         weekdaysNumbers.push(weekDay);
     })
     defineWeekday(weekdaysNumbers);
@@ -97,14 +97,13 @@ window.onload = () => {
   }
 
   function loadWeatherIcons (forecast) {
-    console.log(forecast.daily.data)
     let iconName = forecast.currently.icon;
     let iconURL = icons[iconName];
     let currentWeather = document.querySelector('.currentWeather--image');
     currentWeather.style.background = `url(/dist/${iconURL})`;
     currentWeather.style.backgroundSize = "cover";
     let weatherForecast = document.querySelector('.weatherForecast--images');
-    for (let i = 2; i <= 4; i++){
+    for (let i = 1; i <= 3; i++){
       iconName = forecast.daily.data[i].icon;
       iconURL = icons[iconName];
       weatherForecast.insertAdjacentHTML('beforeend', `<img src="/dist/${iconURL}">`)
@@ -124,7 +123,7 @@ window.onload = () => {
     if (Array.isArray(number)) {
       number.forEach((number) => {
         let weekday = weekdaysTable[number];
-        document.querySelector('.weatherForecast--days').insertAdjacentHTML('afterbegin', `<div>${weekday}</div>`);
+        document.querySelector('.weatherForecast--days').insertAdjacentHTML('beforeend', `<div>${weekday}</div>`);
       })
     }
 

@@ -368,22 +368,22 @@ body {
   justify-content: space-between;
   align-items: center;
 }
-.header .options {
+.header--options {
   height: 10%;
   display: flex;
   justify-content: flex-start;
   align-items: center;
 }
-.header .options input {
+.header--options input {
   height: 40px;
   width: 40px;
 }
-.header .options select {
+.header--options select {
   width: 60px;
   height: 40px;
   margin-right: 10px;
 }
-.header .options input[class=refresh] {
+.header--options input[class=refresh] {
   background-color: black;
   background-image: url(images/689efaff758bbe0f32b0e5b152b49c2b.png);
   background-size: contain;
@@ -393,11 +393,11 @@ body {
   border: none;
   margin-right: 10px;
 }
-.header .options .cityInput {
+.header--options .cityInput {
   display: flex;
   margin-bottom: 2%;
 }
-.header .options .cityInput input[type=submit] {
+.header--options .cityInput input[type=submit] {
   margin: 0;
 }
 

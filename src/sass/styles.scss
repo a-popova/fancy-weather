@@ -25,7 +25,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    .options{
+    &--options{
         height: 10%;
         display: flex;
         justify-content: flex-start;
