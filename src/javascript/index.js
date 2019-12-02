@@ -82,7 +82,6 @@ window.onload = () => {
     days.forEach(function(day){
         var unixDate = new Date(day.time * 1000);
         var weekDay = unixDate.getDay();
-        console.log(weekDay);
         weekdaysNumbers.push(weekDay);
     })
     defineWeekday(weekdaysNumbers);
@@ -95,6 +94,8 @@ window.onload = () => {
     document.querySelector(".currentWeather--temperature").innerHTML += `${temperature}°`;
     document.querySelector(".currentWeather--overcast").insertAdjacentHTML('afterbegin', `<div>Overcast</div><div>Feels like: ${apparentTemp}</div><div>Wind: ${wind}</div><div>Humidity: ${humidity}</div>`);
   }
+
+  loadImage();
 
   function loadWeatherIcons (forecast) {
     let iconName = forecast.currently.icon;
@@ -129,40 +130,32 @@ window.onload = () => {
 
   }
 
+  async function loadImage (){
+    const baseUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${flickrAPIkey}`;
+    const params = `&tags=flower&per_page=1&format=json&nojsoncallback=1&extras=url_h`;
+    const url = baseUrl + params;
+
+    let data;
+    try {
+      const response = await fetch(url);
+      data = await response.json();
+      console.log(data);
+    } catch (e) {
+      console.error(e);
+    }
+    data = data.photos.photo[0];
+    let imageURL = `https://farm${data.farm}.staticflickr.com/${data.server}/${data.id}_${data.secret}_b.jpg`;
+    let wrapper = document.querySelector('.wrapper');
+    wrapper.style.background = `url(${imageURL}) no-repeat`;
+    console.log(imageURL);
+  }
+
   mapboxgl.accessToken = mapboxToken;
   var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v11',
     zoom: 10
   });
-
-
-  // const ACCESS_KEY = 'a24d7baec6101d6a79aa8a053926d35f9817c6c6e818ddf40f80982eb11b2ee2';
-
-  // async function searchImageByQuery(query) {
-  //   const baseUrl = 'https://api.unsplash.com/photos/random';
-  //   const queryString = `?query=town,${query}&client_id=${ACCESS_KEY}`;
-
-  //   const url = baseUrl + queryString;
-
-  //   let data;
-  //   try {
-  //     const response = await fetch(url);
-  //     data = await response.json();
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  //   imageWidth = data.width;
-  //   imageHeight = data.height;
-
-  //   const image = new Image();
-  //   image.crossOrigin = 'Anonymous';
-  //   image.src = data.urls.small;
-  //   image.onload = () => {
-  //     reflectImage(image, imageWidth, imageHeight);
-  //     savedImage = image;
-  //   };
-  // }
 
 };
 

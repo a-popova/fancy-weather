@@ -13,6 +13,7 @@ import Tornado from "../images/tornado.png";
 
 export default {
   ["clear-day"]: ClearDay,
+  ["partly-cloudy-day"]: PartlyCloudyDay,
   ["partly-cloudy-night"]: PartlyCloudyNight,
   ["clear-night"]: ClearNight,
   ["cloudy"]: Cloudy,
