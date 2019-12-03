@@ -50,21 +50,26 @@ window.onload = () => {
     } catch (e) {
       console.error(e);
     }
-
-    let city = data.results[0].components.state;
+    let city = data.results[0].components.city || data.results[0].components.state;
     let country = data.results[0].components.country;
     document.querySelector(".location").innerHTML = `${city}, ${country}`;
 
     latitude = data.results[0].geometry.lat;
     longitude = data.results[0].geometry.lng;
     map.setCenter([longitude, latitude]);
-    document.querySelector(".coordinates").insertAdjacentHTML('afterbegin', `<div>Latitude: ${Math.trunc(latitude)}°</div><div>Longitude: ${longitude.toString().slice(3)}'</div>`);
-  
-    let dateUnformatted = data.timestamp.created_http;
-    let arr = dateUnformatted.split(" ");
+    document.querySelector('.latitude').innerHTML = `Latitude: ${Math.trunc(latitude)}°`;
+    document.querySelector('.longitude').innerHTML = `Longitude: ${Math.trunc(longitude)}'`;
+
+    const utcDate1 = new Date();
+    let localDate = utcDate1.toLocaleString('en-US', {timeZone: "America/Los_Angeles"});
+    
+    let arr = localDate.split(" ");
+    console.log(arr);
     let date = `${arr[0].slice(0, -1)} ${arr[1]} ${arr[2]}`;
     let time = arr[4].slice(0, 5);
     document.querySelector('.date').innerHTML = `${date}  ${time}`;
+
+    getForecast(latitude, longitude);
   }
 
   function success(pos) {
@@ -74,7 +79,8 @@ window.onload = () => {
     getForecast(latitude, longitude);
     getLocationCity();
     map.setCenter([longitude, latitude]);
-    document.querySelector(".coordinates").insertAdjacentHTML('afterbegin', `<div>Latitude: ${Math.trunc(latitude)}°</div><div>Longitude: ${longitude.toString().slice(3)}'</div>`);
+    document.querySelector('.latitude').innerHTML = `Latitude: ${Math.trunc(latitude)}°`;
+    document.querySelector('.longitude').innerHTML = `Longitude: ${longitude.toString().slice(3)}'`;
 
     var unixDate = new Date(pos.timestamp);
     let arr = unixDate.toString().split(" ");
@@ -114,9 +120,33 @@ window.onload = () => {
     } catch (e) {
       console.error(e);
     }
-    let dayOne = data.daily.data[1];
-    let dayTwo = data.daily.data[2];
-    let dayThree = data.daily.data[3];
+    let days = [data.daily.data[1], data.daily.data[2], data.daily.data[3]];
+    let weekdaysNumbers = [];
+    days.forEach(function(day){
+        var unixDate = new Date(day.time * 1000);
+        var weekDay = unixDate.getDay();
+        weekdaysNumbers.push(weekDay);
+    })
+    showTemperature(data);
+    defineWeekday(weekdaysNumbers);
+    loadWeatherIcons(data);
+
+    let temperature = Math.round(data.currently.temperature);
+    let apparentTemp = Math.round(data.currently.apparentTemperature);
+    let wind = `${data.currently.windSpeed} m/s`;
+    let humidity = `${Math.round(data.currently.humidity * 100)}%`;
+    document.querySelector(".currentWeather--temperature").innerHTML = `${temperature}°`;
+    document.querySelector('.overcast--apparentTemp').innerHTML = `Feels like: ${apparentTemp}`;
+    document.querySelector('.overcast--wind').innerHTML = `Wind: ${wind}`;
+    document.querySelector('.overcast--humidity').innerHTML = `Humidity: ${humidity}`;
+  }
+
+  loadImage();
+
+  function showTemperature(temperatureData){
+    let dayOne = temperatureData.daily.data[1];
+    let dayTwo = temperatureData.daily.data[2];
+    let dayThree = temperatureData.daily.data[3];
     let dayOneTemp = Math.round((dayOne.temperatureMax + dayOne.temperatureMin) / 2);
     let dayTwoTemp = Math.round((dayTwo.temperatureMax + dayTwo.temperatureMin) / 2);
     let dayThreeTemp = Math.round((dayThree.temperatureMax + dayThree.temperatureMin) / 2);
@@ -124,25 +154,7 @@ window.onload = () => {
     document.querySelector('.weatherForecast--day2--temp').innerHTML = dayTwoTemp;
     document.querySelector('.weatherForecast--day3--temp').innerHTML = dayThreeTemp;
 
-    let days = [dayOne, dayTwo, dayThree];
-    let weekdaysNumbers = [];
-    days.forEach(function(day){
-        var unixDate = new Date(day.time * 1000);
-        var weekDay = unixDate.getDay();
-        weekdaysNumbers.push(weekDay);
-    })
-    defineWeekday(weekdaysNumbers);
-    loadWeatherIcons(data);
-
-    let temperature = Math.round(data.currently.temperature);
-    let apparentTemp = Math.round(data.currently.apparentTemperature);
-    let wind = `${data.currently.windSpeed} m/s`;
-    let humidity = `${data.currently.humidity * 100}%`;
-    document.querySelector(".currentWeather--temperature").innerHTML += `${temperature}°`;
-    document.querySelector(".currentWeather--overcast").insertAdjacentHTML('afterbegin', `<div>Overcast</div><div>Feels like: ${apparentTemp}</div><div>Wind: ${wind}</div><div>Humidity: ${humidity}</div>`);
   }
-
-  loadImage();
 
   function loadWeatherIcons (forecast) {
     let iconName = forecast.currently.icon;
@@ -154,6 +166,7 @@ window.onload = () => {
       iconName = forecast.daily.data[i].icon;
       iconURL = icons[iconName];
       document.querySelector(`.weatherForecast--day${i}--image`).style.background = `url(/dist/${iconURL})`;
+      document.querySelector(`.weatherForecast--day${i}--image`).style.backgroundSize = "cover";
     }
   }
 
@@ -168,13 +181,10 @@ window.onload = () => {
       6: 'Saturday'
     }
     if (Array.isArray(number)) {
-      for (let i = 1; i < number.length; i++){
-        let weekday = weekdaysTable[number];
+      for (let i = 1; i <= number.length; i++){
+        let weekday = weekdaysTable[number[i-1]];
         document.querySelector(`.weatherForecast--day${i}--weekday`).innerHTML = weekday;
       }
-    //   number.forEach((number) => {
-    //     let weekday = weekdaysTable[number];
-    //   })
     }
   }
 

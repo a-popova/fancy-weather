@@ -455,8 +455,15 @@ body {
 .column.left .weatherForecast--day1, .column.left .weatherForecast--day2, .column.left .weatherForecast--day3 {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
   margin-left: 5%;
   margin-right: 5%;
+  font-size: 24px;
+}
+.column.left .weatherForecast--day1--image, .column.left .weatherForecast--day2--image, .column.left .weatherForecast--day3--image {
+  width: 70px;
+  height: 70px;
 }
 .column.right {
   width: 40%;

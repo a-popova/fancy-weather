@@ -16,12 +16,19 @@ let markup = `
     </div>  </header>
     <main class="main">
       <div class="column left">
-        <div class="location"></div>
-        <div class="date"></div>
+        <div class="currentLocation">
+          <div class="location"></div>
+          <div class="date"></div>
+        </div>
         <div class="currentWeather">
           <div class="currentWeather--temperature"></div>
           <div class="currentWeather--image"></div>
-          <div class="currentWeather--overcast"></div>
+          <div class="currentWeather--overcast">
+            <div>Overcast</div>
+              <div class="overcast--apparentTemp"></div>
+              <div class="overcast--wind"></div>
+              <div class="overcast--humidity"></div>
+          </div>
         </div>
         <div class="weatherForecast">
           <div class="weatherForecast--day1">
@@ -42,6 +49,9 @@ let markup = `
         </div> </div>  
       <div class="column right">
         <div id="map"></div>
-        <div class="coordinates"></div>
+        <div class="coordinates">
+          <div class="latitude"></div>
+          <div class="longitude"></div>
+        </div>
       </div> </main>`
 export default markup;
