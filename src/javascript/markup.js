@@ -1,4 +1,5 @@
-let markup = `<header class="header">
+let markup = `
+<header class="header">
     <div class="header--options">
       <input type="submit" name="refresh" alt="refresh" class="refresh" value=" ">
       <select>
@@ -23,12 +24,22 @@ let markup = `<header class="header">
           <div class="currentWeather--overcast"></div>
         </div>
         <div class="weatherForecast">
-          <div class="weatherForecast--days"></div>
-          <div class="weatherForecast--images"></div>
-          <div class="weatherForecast--temp"></div>
-        </div>
-        <div class="weatherForecast"></div>  
-      </div>  
+          <div class="weatherForecast--day1">
+            <div class="weatherForecast--day1--weekday"></div>
+            <div class="weatherForecast--day1--image"></div>
+            <div class="weatherForecast--day1--temp"></div>
+          </div>
+          <div class="weatherForecast--day2">
+            <div class="weatherForecast--day2--weekday"></div>
+            <div class="weatherForecast--day2--image"></div>
+            <div class="weatherForecast--day2--temp"></div>
+          </div>
+          <div class="weatherForecast--day3">
+            <div class="weatherForecast--day3--weekday"></div>
+            <div class="weatherForecast--day3--image"></div>
+            <div class="weatherForecast--day3--temp"></div>
+          </div>  
+        </div> </div>  
       <div class="column right">
         <div id="map"></div>
         <div class="coordinates"></div>

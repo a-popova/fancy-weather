@@ -75,6 +75,7 @@ body {
         display: flex;
         flex-direction: column;
         justify-content: space-around;
+        color: gray;
         & .location {
             font-size: 30px;
             text-transform: uppercase;
@@ -106,30 +107,14 @@ body {
         }
         & .weatherForecast {
             display: flex;
-            flex-direction: column;
-            &--days,
-            &--temp {
+            &--day1,
+            &--day2, 
+            &--day3 {
                 display: flex;
-                div {
-                    margin-right: 7%;
-                    font-size: 40px;
-                }
-            }
-            &--temp {
-                div {
-                    font-size: 70px;
-                    margin-right: 14%;
-                    margin-left: 5%;
-                }
-            }
-            &--images {
-                img {
-                    height: 80px;
-                    width: 80px;
-                    margin-right: 12%;
-                    margin-left: 5%;
-                }
-            }
+                flex-direction: column;
+                margin-left: 5%;
+                margin-right: 5%;
+            }    
         }
     }
     &.right {
