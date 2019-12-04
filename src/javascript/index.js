@@ -118,9 +118,9 @@ window.onload = () => {
 
   function showCurrentForecast(forecast) {
     document.querySelector(".currentWeather--temperature").innerHTML = forecast.temperature;
-    document.querySelector('.overcast--apparentTemp').innerHTML = forecast[apparentTemp];
-    document.querySelector('.overcast--wind').innerHTML = forecast[wind];
-    document.querySelector('.overcast--humidity').innerHTML = forecast[humidity];
+    document.querySelector('.overcast--apparentTemp').innerHTML = forecast.apparentTemp;
+    document.querySelector('.overcast--wind').innerHTML = forecast.wind;
+    document.querySelector('.overcast--humidity').innerHTML = forecast.humidity;
     document.querySelector('.currentWeather--image').style.background = forecast.iconURL;
     document.querySelector('.currentWeather--image').style.backgroundSize = "cover";
   }
@@ -169,6 +169,8 @@ window.onload = () => {
   }
 
   function renderWeatherIcons (forecast) {
+    let iconName;
+    let iconURL;
     for (let i = 1; i <= 3; i++){
       iconName = forecast.daily.data[i].icon;
       iconURL = icons[iconName];
@@ -200,8 +202,7 @@ window.onload = () => {
     data = data.photos.photo[0];
     let imageURL = `https://farm${data.farm}.staticflickr.com/${data.server}/${data.id}_${data.secret}_b.jpg`;
 
-    let imagecontainer = document.createElement("div");
-    imagecontainer.style.background = `url(${imageURL}) no-repeat`;
+    document.body.style.background = `url(${imageURL}) no-repeat`;
   }
 
   async function getLocationByCity(cityInput){
