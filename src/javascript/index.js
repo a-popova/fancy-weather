@@ -43,12 +43,6 @@ window.onload = () => {
     map.setCenter([longitude, latitude]);
     document.querySelector('.latitude').innerHTML = `Latitude: ${Math.trunc(latitude)}°`;
     document.querySelector('.longitude').innerHTML = `Longitude: ${longitude.toString().slice(3)}'`;
-
-    /*var unixDate = new Date(pos.timestamp);
-    let arr = unixDate.toString().split(" ");
-    let date = `${arr[0]} ${arr[2]} ${arr[1]}`;
-    let time = arr[4].slice(0, 5);
-    document.querySelector('.date').innerHTML = `${date}  ${time}`;*/
   };
   
   navigator.geolocation.getCurrentPosition(success);
@@ -72,19 +66,31 @@ window.onload = () => {
     showLocation(city, country);
   }
 
-  function renderDate(APIResponse) {
-    let timeZone = APIResponse.results[0].annotations.timezone.name;
-    const utcDate1 = new Date();
-    let localDate = utcDate1.toLocaleString({timeZone: `${timeZone}`});
-    showDate(localDate);
-  }
-
   function showLocation(city, country) {
     document.querySelector(".location").innerHTML = `${city}, ${country}`;
   }
 
-  function showDate(date) {
-    console.log(date);
+
+  function renderDate(APIResponse) {
+    let timeZone = APIResponse.results[0].annotations.timezone.name;
+    const utcDate = new Date(); 
+    let localDate = utcDate.toLocaleString([], {localeMatcher: "best fit", timeZone: `${timeZone}`});
+    console.log(timeZone);
+    console.log(localDate);
+    showDate(utcDate, localDate);
+  }
+
+  function showDate(utcDate, localDate) {
+    console.log(utcDate, localDate);
+    // var unixDate = new Date(utcDate.time * 1000);
+    // var weekDay = unixDate.getDay();
+    let utcDateString = utcDate.toString();
+    let utcDateArr = utcDateString.split(" ");
+    let date = `${utcDateArr[0]} ${utcDateArr[2]} ${utcDateArr[1]}`;
+
+    let localDateArr = localDate.split(" ");
+    let time = localDateArr[1].slice(0, 5);
+    document.querySelector('.date').innerHTML = `${date}  ${time}`;
   }
 
   async function getForecast(lat, lon){
@@ -235,18 +241,6 @@ window.onload = () => {
     document.querySelector('.longitude').innerHTML = `Longitude: ${Math.trunc(longitude)}'`;
 
     getForecast(latitude, longitude);
-  }
-
-
-
-  function renderData(){
- 
-  
-    let arr = localDate.split(" ");
-    console.log(arr);
-    let date = `${arr[0].slice(0, -1)} ${arr[1]} ${arr[2]}`;
-    let time = arr[4].slice(0, 5);
-    document.querySelector('.date').innerHTML = `${date}  ${time}`;
   }
 
   
