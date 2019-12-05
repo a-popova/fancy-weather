@@ -22,10 +22,10 @@ window.onload = () => {
   let searchCityButton = document.querySelector('.header--cityInput input[class=search]');
   searchCityButton.addEventListener('click', () => {getLocationByCity(city.value);})
 
-  let showFahrButton = document.querySelector('.tempF');
-  showFahrButton.addEventListener('click', () => {fahrenheit = true; celcius = false; getForecast(latitude, longitude)});
-  let showCelcButton = document.querySelector('.tempC');
-  showCelcButton.addEventListener('click', () => {celcius = true; fahrenheit = false; getForecast(latitude, longitude)});
+  let fahrButton = document.querySelector('.tempF');
+  fahrButton.addEventListener('click', () => {fahrenheit = true; celcius = false; getForecastFahrenheit()});
+  let celcButton = document.querySelector('.tempC');
+  celcButton.addEventListener('click', () => {celcius = true; fahrenheit = false; getForecastCelcius()});
 
   mapboxgl.accessToken = mapboxToken;
   var map = new mapboxgl.Map({
@@ -75,31 +75,44 @@ window.onload = () => {
     let timeZone = APIResponse.results[0].annotations.timezone.name;
     const utcDate = new Date(); 
     let localDate = utcDate.toLocaleString([], {localeMatcher: "best fit", timeZone: `${timeZone}`});
-    console.log(timeZone);
-    console.log(localDate);
     showDate(utcDate, localDate);
   }
 
   function showDate(utcDate, localDate) {
-    console.log(utcDate, localDate);
-    // var unixDate = new Date(utcDate.time * 1000);
-    // var weekDay = unixDate.getDay();
     let utcDateString = utcDate.toString();
     let utcDateArr = utcDateString.split(" ");
     let date = `${utcDateArr[0]} ${utcDateArr[2]} ${utcDateArr[1]}`;
 
     let localDateArr = localDate.split(" ");
     let time = localDateArr[1].slice(0, 5);
-    document.querySelector('.date').innerHTML = `${date}  ${time}`;
+    document.querySelector('.date').innerHTML = `${date}   ${time}`;
   }
 
   async function getForecast(lat, lon){
     var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    var targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${lat},${lon}?lang=en&units=auto`;
     if (celcius) {
-      var targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${lat},${lon}?lang=en&units=si`;
+      highlightTempButton(celcButton, fahrButton);
     } else {
-      var targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${lat},${lon}?lang=en&units=us`;
+      highlightTempButton(fahrButton, celcButton);
     }
+
+    try {
+      const response = await fetch(proxyUrl + targetUrl);
+      var data = await response.json();
+    } catch (e) {
+      console.error(e);
+    }
+    console.log(data);
+
+    renderCurrentForecast(data);
+    render3daysForecast(data);
+  }
+
+  async function getForecastCelcius() {
+    var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    var targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${latitude},${longitude}?lang=en&units=si`;
+    highlightTempButton(celcButton, fahrButton);
 
     try {
       const response = await fetch(proxyUrl + targetUrl);
@@ -110,6 +123,27 @@ window.onload = () => {
 
     renderCurrentForecast(data);
     render3daysForecast(data);
+  }
+
+  async function getForecastFahrenheit() {
+    var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    var targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${latitude},${longitude}?lang=en&units=us`;
+    highlightTempButton(fahrButton, celcButton);
+
+    try {
+      const response = await fetch(proxyUrl + targetUrl);
+      var data = await response.json();
+    } catch (e) {
+      console.error(e);
+    }
+
+    renderCurrentForecast(data);
+    render3daysForecast(data);
+  }
+
+  function highlightTempButton(trueButton, falseButton) {
+    falseButton.classList.remove("highlighted");
+    trueButton.classList.add("highlighted");
   }
 
   function renderCurrentForecast(APIResponse) {

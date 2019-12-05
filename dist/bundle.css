@@ -385,6 +385,9 @@ body {
   height: 40px;
   width: 40px;
 }
+.header--options input:hover {
+  background-color: lightgray;
+}
 .header--options select {
   width: 60px;
   height: 40px;
@@ -392,7 +395,7 @@ body {
 }
 .header--options input[class=refresh] {
   background-color: black;
-  background-image: url(images/689efaff758bbe0f32b0e5b152b49c2b.png);
+  background-image: url(images/a4ccd0052ef2b11f74f9ae4adb9d39da.png);
   background-size: contain;
   background-repeat: no-repeat;
   background-origin: content-box;
@@ -443,7 +446,7 @@ body {
 }
 .column.left .currentWeather--temperature {
   font-size: 140px;
-  margin-right: 10%;
+  margin-right: 15%;
 }
 .column.left .currentWeather--image {
   background-size: cover;
@@ -460,6 +463,7 @@ body {
   display: flex;
 }
 .column.left .weatherForecast--day1, .column.left .weatherForecast--day2, .column.left .weatherForecast--day3 {
+  height: 200px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -489,4 +493,10 @@ body {
 #map {
   width: 100%;
   height: 70%;
+}
+
+.highlighted {
+  background-color: gray;
+  border: none;
+  outline: none;
 }

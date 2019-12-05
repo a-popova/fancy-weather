@@ -40,6 +40,9 @@ body {
         & input{
             height: 40px;
             width: 40px;
+            &:hover {
+                background-color: lightgray;
+            }
         }
         & select {
             width: 60px;
@@ -98,7 +101,7 @@ body {
             position: relative;
             &--temperature {
                 font-size: 140px;
-                margin-right: 10%;
+                margin-right: 15%;
             }
             &--image {
                 background-size: cover;
@@ -117,6 +120,7 @@ body {
             &--day1,
             &--day2, 
             &--day3 {
+                height: 200px;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -146,7 +150,13 @@ body {
     }
 }
 
-    #map {
-        width: 100%;
-        height: 70%;
-    }
+#map {
+    width: 100%;
+    height: 70%;
+}
+
+.highlighted {
+    background-color: gray;
+    border: none;
+    outline: none;
+}
