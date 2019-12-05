@@ -357,6 +357,13 @@ body {
   background: #ffffff;
 }
 
+.image {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  opacity: 0.3;
+}
+
 .wrapper {
   box-sizing: border-box;
   margin: 0 auto;

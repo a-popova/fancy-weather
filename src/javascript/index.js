@@ -63,13 +63,16 @@ window.onload = () => {
       console.error(e);
     }
     renderLocation(data);
+    renderDate(data);
   }
 
   function renderLocation(APIResponse) {
-    let city = APIResponse.results[0].components.city;
+    let city = APIResponse.results[0].components.city || data.results[0].components.state;
     let country = APIResponse.results[0].components.country;
     showLocation(city, country);
+  }
 
+  function renderDate(APIResponse) {
     let timeZone = APIResponse.results[0].annotations.timezone.name;
     const utcDate1 = new Date();
     let localDate = utcDate1.toLocaleString({timeZone: `${timeZone}`});
@@ -106,7 +109,7 @@ window.onload = () => {
   function renderCurrentForecast(APIResponse) {
     let forecast = {};
     forecast.temperature = `${Math.round(APIResponse.currently.temperature)}°`;
-    forecast.apparentTemp = `Feels like: ${Math.round(APIResponse.currently.apparentTemperature)}`;
+    forecast.apparentTemp = `Feels like: ${Math.round(APIResponse.currently.apparentTemperature)}°`;
     forecast.wind = `Wind: ${APIResponse.currently.windSpeed} m/s`;
     forecast.humidity = `Humidity: ${Math.round(APIResponse.currently.humidity * 100)}%`;
     let iconName = APIResponse.currently.icon;
@@ -180,12 +183,12 @@ window.onload = () => {
   }
 
   function show3daysTemperature(temperature) {
-    document.querySelector('.weatherForecast--day1--temp').innerHTML = temperature.day1;
-    document.querySelector('.weatherForecast--day2--temp').innerHTML = temperature.day2;
-    document.querySelector('.weatherForecast--day3--temp').innerHTML = temperature.day3;
+    document.querySelector('.weatherForecast--day1--temp').innerHTML = `${temperature.day1}°`;
+    document.querySelector('.weatherForecast--day2--temp').innerHTML = `${temperature.day2}°`;
+    document.querySelector('.weatherForecast--day3--temp').innerHTML = `${temperature.day3}°`;
   }
 
-  loadImage();
+  //loadImage();
 
   async function loadImage (){
     const baseUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${flickrAPIkey}`;
@@ -202,7 +205,10 @@ window.onload = () => {
     data = data.photos.photo[0];
     let imageURL = `https://farm${data.farm}.staticflickr.com/${data.server}/${data.id}_${data.secret}_b.jpg`;
 
-    document.body.style.background = `url(${imageURL}) no-repeat`;
+    var image = document.createElement("div");
+    document.body.prepend(image);
+    image.classList.add("image");
+    image.style.background = `url(${imageURL}) no-repeat`;
   }
 
   async function getLocationByCity(cityInput){
@@ -214,29 +220,33 @@ window.onload = () => {
     } catch (e) {
       console.error(e);
     }
+
+    renderLocation(data);
+    renderCoordinates(data);
+    renderDate(data);
   }
 
-  function renderData(){
-    let city = data.results[0].components.city || data.results[0].components.state;
-    let country = data.results[0].components.country;
-    document.querySelector(".location").innerHTML = `${city}, ${country}`;
-
-    latitude = data.results[0].geometry.lat;
-    longitude = data.results[0].geometry.lng;
+  function renderCoordinates(APIResponse) {
+    latitude = APIResponse.results[0].geometry.lat;
+    longitude = APIResponse.results[0].geometry.lng;
     map.setCenter([longitude, latitude]);
+
     document.querySelector('.latitude').innerHTML = `Latitude: ${Math.trunc(latitude)}°`;
     document.querySelector('.longitude').innerHTML = `Longitude: ${Math.trunc(longitude)}'`;
 
-    const utcDate1 = new Date();
-    let localDate = utcDate1.toLocaleString('en-US', {timeZone: "America/Los_Angeles"});
-    
+    getForecast(latitude, longitude);
+  }
+
+
+
+  function renderData(){
+ 
+  
     let arr = localDate.split(" ");
     console.log(arr);
     let date = `${arr[0].slice(0, -1)} ${arr[1]} ${arr[2]}`;
     let time = arr[4].slice(0, 5);
     document.querySelector('.date').innerHTML = `${date}  ${time}`;
-
-    getForecast(latitude, longitude);
   }
 
   
