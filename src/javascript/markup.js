@@ -7,8 +7,8 @@ let markup = `
         <option value="RU">RU</option>
         <option value="BE">BE</option>
       </select>
-      <input type="submit" name="tempF" class="tempF" value="°F">
-      <input type="submit" name="tempC" class="tempC" value="°C">
+      <input type="submit" name="tempF" class="fahrenheit" value="°F">
+      <input type="submit" name="tempC" class="celcius" value="°C">
     </div>
     <div class="header--cityInput">
       <input type="text" name="city" placeholder="Search city">

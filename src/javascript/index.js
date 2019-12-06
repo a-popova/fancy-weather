@@ -20,11 +20,11 @@ window.onload = () => {
 
   let city = document.querySelector('.header--cityInput input[name=city]');
   let searchCityButton = document.querySelector('.header--cityInput input[class=search]');
-  searchCityButton.addEventListener('click', () => {getLocationByCity(city.value);})
+  searchCityButton.addEventListener('click', () => {getLocationByCity(city.value); city.value = ""; })
 
-  let fahrButton = document.querySelector('.tempF');
+  let fahrButton = document.querySelector('.fahrenheit');
   fahrButton.addEventListener('click', () => {fahrenheit = true; celcius = false; getForecast(latitude, longitude)});
-  let celcButton = document.querySelector('.tempC');
+  let celcButton = document.querySelector('.celcius');
   celcButton.addEventListener('click', () => {celcius = true; fahrenheit = false; getForecast(latitude, longitude)});
 
   mapboxgl.accessToken = mapboxToken;
@@ -39,7 +39,7 @@ window.onload = () => {
     latitude = crd.latitude.toFixed(2);
     longitude = crd.longitude.toFixed(2);
     getForecast(latitude, longitude);
-    getLocation();
+    setInterval(getLocation, 1000);
     map.setCenter([longitude, latitude]);
     document.querySelector('.latitude').innerHTML = `Latitude: ${Math.trunc(latitude)}°`;
     document.querySelector('.longitude').innerHTML = `Longitude: ${longitude.toString().slice(3)}'`;
@@ -57,11 +57,12 @@ window.onload = () => {
       console.error(e);
     }
     renderLocation(data);
-    setInterval(() => {renderDate(data)}, 1000);
+    renderDate(data);
+    //setInterval(() => {renderDate(data)}, 1000);
   }
 
   function renderLocation(APIResponse) {
-    let city = APIResponse.results[0].components.city || data.results[0].components.state;
+    let city = APIResponse.results[0].components.city || APIResponse.results[0].components.state;
     let country = APIResponse.results[0].components.country;
     showLocation(city, country);
   }
@@ -104,7 +105,6 @@ window.onload = () => {
     } catch (e) {
       console.error(e);
     }
-    console.log(data);
 
     renderCurrentForecast(data);
     render3daysForecast(data);
