@@ -23,9 +23,9 @@ window.onload = () => {
   searchCityButton.addEventListener('click', () => {getLocationByCity(city.value);})
 
   let fahrButton = document.querySelector('.tempF');
-  fahrButton.addEventListener('click', () => {fahrenheit = true; celcius = false; getForecastFahrenheit()});
+  fahrButton.addEventListener('click', () => {fahrenheit = true; celcius = false; getForecast(latitude, longitude)});
   let celcButton = document.querySelector('.tempC');
-  celcButton.addEventListener('click', () => {celcius = true; fahrenheit = false; getForecastCelcius()});
+  celcButton.addEventListener('click', () => {celcius = true; fahrenheit = false; getForecast(latitude, longitude)});
 
   mapboxgl.accessToken = mapboxToken;
   var map = new mapboxgl.Map({
@@ -57,7 +57,7 @@ window.onload = () => {
       console.error(e);
     }
     renderLocation(data);
-    renderDate(data);
+    setInterval(() => {renderDate(data)}, 1000);
   }
 
   function renderLocation(APIResponse) {
@@ -74,7 +74,7 @@ window.onload = () => {
   function renderDate(APIResponse) {
     let timeZone = APIResponse.results[0].annotations.timezone.name;
     const utcDate = new Date(); 
-    let localDate = utcDate.toLocaleString([], {localeMatcher: "best fit", timeZone: `${timeZone}`});
+    let localDate = utcDate.toLocaleString('auto', {localeMatcher: "best fit", timeZone: `${timeZone}`});
     showDate(utcDate, localDate);
   }
 
@@ -90,10 +90,11 @@ window.onload = () => {
 
   async function getForecast(lat, lon){
     var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    var targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${lat},${lon}?lang=en&units=auto`;
     if (celcius) {
+      var targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${lat},${lon}?lang=en&units=si`;
       highlightTempButton(celcButton, fahrButton);
     } else {
+      var targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${latitude},${longitude}?lang=en&units=us`;
       highlightTempButton(fahrButton, celcButton);
     }
 
@@ -104,38 +105,6 @@ window.onload = () => {
       console.error(e);
     }
     console.log(data);
-
-    renderCurrentForecast(data);
-    render3daysForecast(data);
-  }
-
-  async function getForecastCelcius() {
-    var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    var targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${latitude},${longitude}?lang=en&units=si`;
-    highlightTempButton(celcButton, fahrButton);
-
-    try {
-      const response = await fetch(proxyUrl + targetUrl);
-      var data = await response.json();
-    } catch (e) {
-      console.error(e);
-    }
-
-    renderCurrentForecast(data);
-    render3daysForecast(data);
-  }
-
-  async function getForecastFahrenheit() {
-    var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    var targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${latitude},${longitude}?lang=en&units=us`;
-    highlightTempButton(fahrButton, celcButton);
-
-    try {
-      const response = await fetch(proxyUrl + targetUrl);
-      var data = await response.json();
-    } catch (e) {
-      console.error(e);
-    }
 
     renderCurrentForecast(data);
     render3daysForecast(data);
