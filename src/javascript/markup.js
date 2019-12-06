@@ -23,11 +23,11 @@ let markup = `
         <div class="currentWeather">
           <div class="currentWeather--temperature"></div>
           <div class="currentWeather--image"></div>
-          <div class="currentWeather--overcast">
-            <div>Overcast</div>
-              <div class="overcast--apparentTemp"></div>
-              <div class="overcast--wind"></div>
-              <div class="overcast--humidity"></div>
+          <div class="currentWeather--description">
+            <div class="description--summary"></div>
+            <div class="description--apparentTemp"></div>
+            <div class="description--wind"></div>
+            <div class="description--humidity"></div>
           </div>
         </div>
         <div class="weatherForecast">

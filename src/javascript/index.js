@@ -58,7 +58,6 @@ window.onload = () => {
     }
     renderLocation(data);
     renderDate(data);
-    //setInterval(() => {renderDate(data)}, 1000);
   }
 
   function renderLocation(APIResponse) {
@@ -116,8 +115,10 @@ window.onload = () => {
   }
 
   function renderCurrentForecast(APIResponse) {
+    console.log(APIResponse);
     let forecast = {};
     forecast.temperature = `${Math.round(APIResponse.currently.temperature)}°`;
+    forecast.summary = `${APIResponse.currently.summary}`;
     forecast.apparentTemp = `Feels like: ${Math.round(APIResponse.currently.apparentTemperature)}°`;
     forecast.wind = `Wind: ${APIResponse.currently.windSpeed} m/s`;
     forecast.humidity = `Humidity: ${Math.round(APIResponse.currently.humidity * 100)}%`;
@@ -125,14 +126,16 @@ window.onload = () => {
     let iconURL = icons[iconName];
     forecast.iconURL = `url(/dist/${iconURL})`;
 
+    loadImage(iconName);
     showCurrentForecast(forecast);
   }
 
   function showCurrentForecast(forecast) {
     document.querySelector(".currentWeather--temperature").innerHTML = forecast.temperature;
-    document.querySelector('.overcast--apparentTemp').innerHTML = forecast.apparentTemp;
-    document.querySelector('.overcast--wind').innerHTML = forecast.wind;
-    document.querySelector('.overcast--humidity').innerHTML = forecast.humidity;
+    document.querySelector('.description--summary').innerHTML = forecast.summary;
+    document.querySelector('.description--apparentTemp').innerHTML = forecast.apparentTemp;
+    document.querySelector('.description--wind').innerHTML = forecast.wind;
+    document.querySelector('.description--humidity').innerHTML = forecast.humidity;
     document.querySelector('.currentWeather--image').style.background = forecast.iconURL;
     document.querySelector('.currentWeather--image').style.backgroundSize = "cover";
   }
@@ -197,11 +200,10 @@ window.onload = () => {
     document.querySelector('.weatherForecast--day3--temp').innerHTML = `${temperature.day3}°`;
   }
 
-  //loadImage();
-
-  async function loadImage (){
+  async function loadImage (tag){
+    console.log(tag);
     const baseUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${flickrAPIkey}`;
-    const params = `&tags=rain&per_page=1&format=json&nojsoncallback=1&extras=url_h`;
+    const params = `&tags=${tag}&format=json&nojsoncallback=1&extras=url_h`;
     const url = baseUrl + params;
 
     let data;
@@ -211,13 +213,13 @@ window.onload = () => {
     } catch (e) {
       console.error(e);
     }
-    data = data.photos.photo[0];
+    data = data.photos.photo[1];
     let imageURL = `https://farm${data.farm}.staticflickr.com/${data.server}/${data.id}_${data.secret}_b.jpg`;
 
     var image = document.createElement("div");
     document.body.prepend(image);
     image.classList.add("image");
-    image.style.background = `url(${imageURL}) no-repeat`;
+    image.style.backgroundImage = `url(${imageURL})`;
   }
 
   async function getLocationByCity(cityInput){
