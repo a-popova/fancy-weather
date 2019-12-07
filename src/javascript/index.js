@@ -6,9 +6,10 @@ import icons from "./icons";
 
 var latitude;
 var longitude;
+var location;
 var date;
-var celcius = true;
-var fahrenheit = false;
+var isCelcius = true;
+var isFahrenheit = false;
 
 window.onload = () => {
   let wrapper = document.querySelector(".wrapper");
@@ -23,9 +24,9 @@ window.onload = () => {
   searchCityButton.addEventListener('click', () => {getLocationByCity(city.value); city.value = ""; })
 
   let fahrButton = document.querySelector('.fahrenheit');
-  fahrButton.addEventListener('click', () => {fahrenheit = true; celcius = false; getForecast(latitude, longitude)});
+  fahrButton.addEventListener('click', () => {isFahrenheit = true; isCelcius = false; getForecast(latitude, longitude)});
   let celcButton = document.querySelector('.celcius');
-  celcButton.addEventListener('click', () => {celcius = true; fahrenheit = false; getForecast(latitude, longitude)});
+  celcButton.addEventListener('click', () => {isCelcius = true; isFahrenheit = false; getForecast(latitude, longitude)});
 
   mapboxgl.accessToken = mapboxToken;
   var map = new mapboxgl.Map({
@@ -63,6 +64,7 @@ window.onload = () => {
   function renderLocation(APIResponse) {
     let city = APIResponse.results[0].components.city || APIResponse.results[0].components.state;
     let country = APIResponse.results[0].components.country;
+    location = `${city}, ${country}`;
     showLocation(city, country);
   }
 
@@ -90,7 +92,7 @@ window.onload = () => {
 
   async function getForecast(lat, lon){
     var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    if (celcius) {
+    if (isCelcius) {
       var targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${lat},${lon}?lang=en&units=si`;
       highlightTempButton(celcButton, fahrButton);
     } else {
@@ -115,7 +117,6 @@ window.onload = () => {
   }
 
   function renderCurrentForecast(APIResponse) {
-    console.log(APIResponse);
     let forecast = {};
     forecast.temperature = `${Math.round(APIResponse.currently.temperature)}°`;
     forecast.summary = `${APIResponse.currently.summary}`;
@@ -201,7 +202,7 @@ window.onload = () => {
   }
 
   async function loadImage (tag){
-    console.log(tag);
+    console.log(location);
     const baseUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${flickrAPIkey}`;
     const params = `&tags=${tag}&format=json&nojsoncallback=1&extras=url_h`;
     const url = baseUrl + params;

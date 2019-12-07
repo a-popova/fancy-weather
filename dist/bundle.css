@@ -360,7 +360,7 @@ body {
 .image {
   width: 100%;
   height: 100vh;
-  position: absolute;
+  position: fixed;
   z-index: -1;
   background-position: center;
   background-size: cover;
@@ -440,6 +440,7 @@ body {
   text-transform: uppercase;
 }
 .column.left .date {
+  color: white;
   font-size: 22px;
 }
 .column.left .currentWeather {
@@ -460,7 +461,7 @@ body {
   width: 120px;
   height: 120px;
   position: absolute;
-  left: 20%;
+  left: 15%;
   bottom: 50%;
 }
 .column.left .currentWeather--description {
@@ -470,7 +471,7 @@ body {
   display: flex;
 }
 .column.left .weatherForecast--day1, .column.left .weatherForecast--day2, .column.left .weatherForecast--day3 {
-  height: 200px;
+  height: 260px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -480,12 +481,15 @@ body {
   font-size: 24px;
   color: white;
 }
+.column.left .weatherForecast--day1--weekday, .column.left .weatherForecast--day2--weekday, .column.left .weatherForecast--day3--weekday {
+  font-size: 30px;
+}
 .column.left .weatherForecast--day1--image, .column.left .weatherForecast--day2--image, .column.left .weatherForecast--day3--image {
-  width: 70px;
-  height: 70px;
+  width: 100px;
+  height: 100px;
 }
 .column.left .weatherForecast--day1--temp, .column.left .weatherForecast--day2--temp, .column.left .weatherForecast--day3--temp {
-  font-size: 28px;
+  font-size: 34px;
   font-weight: bold;
 }
 .column.right {
@@ -495,11 +499,13 @@ body {
   justify-content: space-around;
 }
 .column.right .coordinates {
-  margin-top: 2%;
+  min-height: 80px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  font-size: 20px;
+  justify-content: space-around;
+  font-size: 26px;
+  color: white;
 }
 
 #map {
