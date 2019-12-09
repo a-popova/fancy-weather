@@ -3,17 +3,26 @@ import {ipinfoToken, openWeatherAPIkey, darkskyAPIkey, flickrAPIkey, flickrSecre
 import {countryNames} from './countrynames.js';
 import markup from './markup.js';
 import icons from "./icons";
+import { type } from 'os';
 
 var latitude;
 var longitude;
 var location;
+var timezone = 'Europe/Minsk';
 var date;
 var isCelcius = true;
 var isFahrenheit = false;
+var season;
+var seasons = ['winter', 'winter', 'spring', 'spring', 'spring', 'summer', 'summer', 'summer', 'autumn', 'autumn', 'autumn', 'winter'];
+var partOfDay;
+var weatherState;
 
 window.onload = () => {
   let wrapper = document.querySelector(".wrapper");
   wrapper.innerHTML += markup;
+  let image = document.createElement("div");
+  document.body.prepend(image);
+  image.classList.add("image");
 
   var day1 = document.querySelector('.weatherForecast--day1');
   var day2 = document.querySelector('.weatherForecast--day2');
@@ -28,6 +37,13 @@ window.onload = () => {
   let celcButton = document.querySelector('.celcius');
   celcButton.addEventListener('click', () => {isCelcius = true; isFahrenheit = false; getForecast(latitude, longitude)});
 
+  let refreshButton = document.querySelector('input[name=refresh]');
+  refreshButton.addEventListener('click', () => {console.log(weatherState); loadImage(weatherState);});
+
+  setInterval(function() {
+    renderDate(timezone);
+  }, 1000);
+
   mapboxgl.accessToken = mapboxToken;
   var map = new mapboxgl.Map({
     container: 'map',
@@ -35,13 +51,13 @@ window.onload = () => {
     zoom: 10
   });
 
-  function success(pos) {
+  async function success(pos) {
     var crd = pos.coords;
     latitude = crd.latitude.toFixed(2);
     longitude = crd.longitude.toFixed(2);
-    getForecast(latitude, longitude);
-    setInterval(getLocation, 1000);
     map.setCenter([longitude, latitude]);
+    await getLocation();
+    await getForecast(latitude, longitude);
     document.querySelector('.latitude').innerHTML = `Latitude: ${Math.trunc(latitude)}°`;
     document.querySelector('.longitude').innerHTML = `Longitude: ${longitude.toString().slice(3)}'`;
   };
@@ -51,42 +67,75 @@ window.onload = () => {
   async function getLocation(){
     const url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${opencagedataAPIkey}&language=en`;
     let data;
-    try {
-      const response = await fetch(url);
-      data = await response.json();
-    } catch (e) {
-      console.error(e);
+    // try {
+    //   const response = await fetch(url);
+    //   data = await response.json();
+    // } catch (e) {
+    //   console.error(e);
+    // }
+    // let timezone = data.results[0].annotations.timezone.name;
+    // renderLocation(data);
+    // renderDate(timezone);
+
+    data = {
+      city: 'Los Angeles',
+      country: 'United States',
+      timezone: 'Europe/Minsk'
     }
+
     renderLocation(data);
-    renderDate(data);
+    renderDate(data.timezone);
   }
 
   function renderLocation(APIResponse) {
-    let city = APIResponse.results[0].components.city || APIResponse.results[0].components.state;
-    let country = APIResponse.results[0].components.country;
-    location = `${city}, ${country}`;
+    // let city = APIResponse.results[0].components.city || APIResponse.results[0].components.state;
+    // let country = APIResponse.results[0].components.country;
+
+    let city = APIResponse.city;
+    let country = APIResponse.country;
+
+    location = `${city},${country}`;
     showLocation(city, country);
   }
 
   function showLocation(city, country) {
     document.querySelector(".location").innerHTML = `${city}, ${country}`;
-  }
+  } 
 
-
-  function renderDate(APIResponse) {
-    let timeZone = APIResponse.results[0].annotations.timezone.name;
+  function renderDate(timezone) {
     const utcDate = new Date(); 
-    let localDate = utcDate.toLocaleString('auto', {localeMatcher: "best fit", timeZone: `${timeZone}`});
-    showDate(utcDate, localDate);
+    let localDate = utcDate.toLocaleString('auto', {localeMatcher: "best fit", timeZone: `${timezone}`});
+
+    let utcDateString = utcDate.toString();
+    let utcDateArr = utcDateString.split(" ");
+    let localDateArr = localDate.split(" ");
+    showDate(utcDateArr, localDateArr);
+
+    let month = localDateArr[0][3] + localDateArr[0][4];
+    season = seasons[month - 1];
+
+    let hour = Number(localDateArr[1][0] + localDateArr[1][1]);
+    switch (true) {
+      case hour >= 5 && hour < 12:
+        partOfDay = 'morning';
+        break;
+      case hour >= 12 && hour < 17:
+        partOfDay = 'afternoon';
+        break;
+      case hour >= 17 && hour < 21:
+        partOfDay = 'evening';
+        break;
+      case hour >= 21 || hour < 5:
+        partOfDay = 'night';
+        break;
+      default:
+        partOfDay = 'afternoon'; 
+    }
   }
 
   function showDate(utcDate, localDate) {
-    let utcDateString = utcDate.toString();
-    let utcDateArr = utcDateString.split(" ");
-    let date = `${utcDateArr[0]} ${utcDateArr[2]} ${utcDateArr[1]}`;
-
-    let localDateArr = localDate.split(" ");
-    let time = localDateArr[1].slice(0, 5);
+    let date = `${utcDate[0]} ${utcDate[2]} ${utcDate[1]}`;
+    let time = localDate[1].slice(0, 5);
     document.querySelector('.date').innerHTML = `${date}   ${time}`;
   }
 
@@ -123,11 +172,11 @@ window.onload = () => {
     forecast.apparentTemp = `Feels like: ${Math.round(APIResponse.currently.apparentTemperature)}°`;
     forecast.wind = `Wind: ${APIResponse.currently.windSpeed} m/s`;
     forecast.humidity = `Humidity: ${Math.round(APIResponse.currently.humidity * 100)}%`;
-    let iconName = APIResponse.currently.icon;
-    let iconURL = icons[iconName];
+    weatherState = APIResponse.currently.icon;
+    let iconURL = icons[weatherState];
     forecast.iconURL = `url(/dist/${iconURL})`;
 
-    loadImage(iconName);
+    loadImage(weatherState);
     showCurrentForecast(forecast);
   }
 
@@ -201,10 +250,9 @@ window.onload = () => {
     document.querySelector('.weatherForecast--day3--temp').innerHTML = `${temperature.day3}°`;
   }
 
-  async function loadImage (tag){
-    console.log(location);
+  async function loadImage(tag) {
     const baseUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${flickrAPIkey}`;
-    const params = `&tags=${tag}&format=json&nojsoncallback=1&extras=url_h`;
+    const params = `&lat=${latitude}&lon=${longitude}&tags=${partOfDay},${season},${tag}&geo_context=2&format=json&nojsoncallback=1&extras=url_o`;
     const url = baseUrl + params;
 
     let data;
@@ -214,12 +262,20 @@ window.onload = () => {
     } catch (e) {
       console.error(e);
     }
-    data = data.photos.photo[1];
-    let imageURL = `https://farm${data.farm}.staticflickr.com/${data.server}/${data.id}_${data.secret}_b.jpg`;
+    
+    renderImage(data);
+  }
 
-    var image = document.createElement("div");
-    document.body.prepend(image);
-    image.classList.add("image");
+  function renderImage(APIResponse) {
+    let imageNumber = Math.floor(Math.random() * APIResponse.photos.photo.length);
+    let image = APIResponse.photos.photo[imageNumber];
+    let url = image.url_o || image.url_h || `https://farm${image.farm}.staticflickr.com/${image.server}/${image.id}_${image.secret}_b.jpg`;
+
+    showImage(url);
+  }
+
+  function showImage(imageURL) {
+    let image = document.querySelector('.image');
     image.style.backgroundImage = `url(${imageURL})`;
   }
 

@@ -1,7 +1,7 @@
 let markup = `
 <header class="header">
     <div class="header--options">
-      <input type="submit" name="refresh" alt="refresh" class="refresh" value=" ">
+      <input type="submit" name="refresh" alt="refresh" class="refresh" value=" " title ="Refresh">
       <select>
         <option value="EN">EN</option>
         <option value="RU">RU</option>
@@ -12,7 +12,7 @@ let markup = `
     </div>
     <div class="header--cityInput">
       <input type="text" name="city" placeholder="Search city">
-      <input type="submit" name="search" class="search" value="search">
+      <input type="submit" name="search" class="search" value="SEARCH">
     </div>  </header>
     <main class="main">
       <div class="column left">

@@ -11,13 +11,13 @@
 
 body {
     width: 100%;
-    min-height: 100vh;
+    height: 100%;
     background: #ffffff;
 }
 
 .image {
     width: 100%;
-    height: 100vh;
+    height: 100%;
     position: fixed;
     z-index: -1;
     background-position: center;
@@ -45,6 +45,7 @@ body {
             width: 40px;
             &:hover {
                 background-color: lightgray;
+                cursor: pointer;
             }
         }
         & select {
@@ -53,20 +54,37 @@ body {
             margin-right: 10px;
         }
         & input[class=refresh] {
-            background-color: black;
+            background-color: white;
             background-image: url(../images/refresh_icon.png);
-            background-size: contain;
+            background-size: cover;
             background-repeat: no-repeat;
             background-origin: content-box;
             padding: 5px;
-            border: none;
             margin-right: 10px;
+            &:hover {
+                background-color: lightgray;
+            }
         }
-        & .cityInput {
-            display: flex;
-            margin-bottom: 2%;
-            input[type=submit]{
-                margin: 0;
+    }
+    &--cityInput {
+        display: flex;
+        margin-bottom: 2%;
+        input {
+            height: 40px;
+        }
+        input[type=text] {
+            box-sizing: border-box;
+            padding-left: 10px;;
+            font-size: 18px;
+        }
+        input[type=submit] {
+            margin: 0;
+            font-size: 16px;
+            color: white;
+            background-color: gray;
+            &:hover {
+                background-color: lightgray;
+                cursor: pointer;
             }
         }
     }
@@ -79,7 +97,7 @@ body {
 }
 
 .column {
-    height: 100vh;
+    height: auto;
     box-sizing: border-box;
     display: flex;
     flex-direction: row;
@@ -90,14 +108,15 @@ body {
         justify-content: space-around;
         color: gray;
         & .location {
+            margin-top: 3%;
             color: white;
             font-weight: bold;
-            font-size: 32px;
+            font-size: 36px;
             text-transform: uppercase;
         }
         & .date {
             color: white;
-            font-size: 22px;
+            font-size: 26px;
         }
         & .currentWeather {
             display: flex;
@@ -105,10 +124,11 @@ body {
             justify-content: flex-start;
             text-transform: uppercase;
             position: relative;
+            margin: 6% 0;
             color: white;
+            font-weight: bold;
             &--temperature {
-                font-size: 140px;
-                font-weight: bold;
+                font-size: 150px;
                 margin-right: 15%;
             }
             &--image {
@@ -120,7 +140,7 @@ body {
                 bottom: 50%;            
             }
             &--description {
-                font-size: 24px;
+                font-size: 28px;
             }
         }
         & .weatherForecast {
@@ -133,19 +153,19 @@ body {
                 flex-direction: column;
                 align-items: center;
                 justify-content: space-around;
-                margin-left: 5%;
-                margin-right: 5%;
+                margin-right: 9%;
                 font-size: 24px;
                 color: white;
                 &--weekday {
-                    font-size: 30px;
+                    font-size: 46px;
+                    font-weight: bold;
                 }
                 &--image {
                     width: 100px;
                     height: 100px;
                 }
                 &--temp {
-                    font-size: 34px;
+                    font-size: 46px;
                     font-weight: bold;
                 }
             }    
@@ -153,24 +173,25 @@ body {
     }
     &.right {
         width: 40%;
+        height: auto;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
         & .coordinates {
-            min-height: 80px;
             display: flex;
             flex-direction: column;
             align-items: flex-end;
             justify-content: space-around;
-            font-size: 26px;
+            font-size: 30px;
             color: white;
         }
     }
 }
 
 #map {
-    width: 100%;
+    width: 70%;
     height: 70%;
+    align-self: flex-end;
 }
 
 .highlighted {

@@ -353,13 +353,13 @@
 }
 body {
   width: 100%;
-  min-height: 100vh;
+  height: 100%;
   background: #ffffff;
 }
 
 .image {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   position: fixed;
   z-index: -1;
   background-position: center;
@@ -390,6 +390,7 @@ body {
 }
 .header--options input:hover {
   background-color: lightgray;
+  cursor: pointer;
 }
 .header--options select {
   width: 60px;
@@ -397,21 +398,38 @@ body {
   margin-right: 10px;
 }
 .header--options input[class=refresh] {
-  background-color: black;
-  background-image: url(images/a4ccd0052ef2b11f74f9ae4adb9d39da.png);
-  background-size: contain;
+  background-color: white;
+  background-image: url(images/66d25913b930ae95bb474f8fa60bbe25.png);
+  background-size: cover;
   background-repeat: no-repeat;
   background-origin: content-box;
   padding: 5px;
-  border: none;
   margin-right: 10px;
 }
-.header--options .cityInput {
+.header--options input[class=refresh]:hover {
+  background-color: lightgray;
+}
+.header--cityInput {
   display: flex;
   margin-bottom: 2%;
 }
-.header--options .cityInput input[type=submit] {
+.header--cityInput input {
+  height: 40px;
+}
+.header--cityInput input[type=text] {
+  box-sizing: border-box;
+  padding-left: 10px;
+  font-size: 18px;
+}
+.header--cityInput input[type=submit] {
   margin: 0;
+  font-size: 16px;
+  color: white;
+  background-color: gray;
+}
+.header--cityInput input[type=submit]:hover {
+  background-color: lightgray;
+  cursor: pointer;
 }
 
 .main {
@@ -421,7 +439,7 @@ body {
 }
 
 .column {
-  height: 100vh;
+  height: auto;
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
@@ -434,14 +452,15 @@ body {
   color: gray;
 }
 .column.left .location {
+  margin-top: 3%;
   color: white;
   font-weight: bold;
-  font-size: 32px;
+  font-size: 36px;
   text-transform: uppercase;
 }
 .column.left .date {
   color: white;
-  font-size: 22px;
+  font-size: 26px;
 }
 .column.left .currentWeather {
   display: flex;
@@ -449,11 +468,12 @@ body {
   justify-content: flex-start;
   text-transform: uppercase;
   position: relative;
+  margin: 6% 0;
   color: white;
+  font-weight: bold;
 }
 .column.left .currentWeather--temperature {
-  font-size: 140px;
-  font-weight: bold;
+  font-size: 150px;
   margin-right: 15%;
 }
 .column.left .currentWeather--image {
@@ -465,7 +485,7 @@ body {
   bottom: 50%;
 }
 .column.left .currentWeather--description {
-  font-size: 24px;
+  font-size: 28px;
 }
 .column.left .weatherForecast {
   display: flex;
@@ -476,41 +496,42 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
-  margin-left: 5%;
-  margin-right: 5%;
+  margin-right: 9%;
   font-size: 24px;
   color: white;
 }
 .column.left .weatherForecast--day1--weekday, .column.left .weatherForecast--day2--weekday, .column.left .weatherForecast--day3--weekday {
-  font-size: 30px;
+  font-size: 46px;
+  font-weight: bold;
 }
 .column.left .weatherForecast--day1--image, .column.left .weatherForecast--day2--image, .column.left .weatherForecast--day3--image {
   width: 100px;
   height: 100px;
 }
 .column.left .weatherForecast--day1--temp, .column.left .weatherForecast--day2--temp, .column.left .weatherForecast--day3--temp {
-  font-size: 34px;
+  font-size: 46px;
   font-weight: bold;
 }
 .column.right {
   width: 40%;
+  height: auto;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
 }
 .column.right .coordinates {
-  min-height: 80px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   justify-content: space-around;
-  font-size: 26px;
+  font-size: 30px;
   color: white;
 }
 
 #map {
-  width: 100%;
+  width: 70%;
   height: 70%;
+  align-self: flex-end;
 }
 
 .highlighted {
