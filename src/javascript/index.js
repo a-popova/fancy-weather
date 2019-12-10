@@ -1,7 +1,7 @@
 import '../sass/styles.scss';
 import { type } from 'os';
 import {
-  ipinfoToken, openWeatherAPIkey, darkskyAPIkey, flickrAPIkey, flickrSecret, mapboxToken, opencagedataAPIkey,
+  ipinfoToken, openWeatherAPIkey, darkskyAPIkey, flickrAPIkey, mapboxToken, opencagedataAPIkey,
 } from './apikeys.js';
 import { countryNames } from './countrynames.js';
 import markup from './markup.js';
@@ -17,10 +17,9 @@ const seasons = ['winter', 'winter', 'spring', 'spring', 'spring', 'summer', 'su
 let partOfDay;
 let weatherState;
 let language = localStorage.getItem('lang') || 'en';
+let temperatureType = localStorage.getItem('temp') || 'celcius'; 
 
 window.onload = () => {
-  let isCelcius = Boolean(localStorage.getItem('celcius')) || true;
-  let isFahrenheit = Boolean(localStorage.getItem('fahrenheit')) || false;
 
   const wrapper = document.querySelector('.wrapper');
   wrapper.innerHTML += markup;
@@ -41,9 +40,9 @@ window.onload = () => {
   languageButton.value = language.toUpperCase();
 
   const fahrButton = document.querySelector('.fahrenheit');
-  fahrButton.addEventListener('click', () => { isFahrenheit = true; isCelcius = false; getForecast(latitude, longitude); });
+  fahrButton.addEventListener('click', () => { temperatureType = 'fahrenheit'; getForecast(latitude, longitude); });
   const celcButton = document.querySelector('.celcius');
-  celcButton.addEventListener('click', () => { isCelcius = true; isFahrenheit = false; getForecast(latitude, longitude); });
+  celcButton.addEventListener('click', () => { temperatureType = 'celcius'; getForecast(latitude, longitude); });
 
   const refreshButton = document.querySelector('input[name=refresh]');
   refreshButton.addEventListener('click', () => { loadImage(weatherState); });
@@ -156,7 +155,7 @@ window.onload = () => {
 
   async function getForecast(lat, lon) {
     const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    if (isCelcius) {
+    if (temperatureType === 'celcius') {
       var targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${lat},${lon}?lang=${language}&units=si`;
       highlightTempButton(celcButton, fahrButton);
     } else {
@@ -178,8 +177,6 @@ window.onload = () => {
   function highlightTempButton(trueButton, falseButton) {
     falseButton.classList.remove('highlighted');
     trueButton.classList.add('highlighted');
-    localStorage.setItem('celcius', isCelcius);
-    localStorage.setItem('fahrenheit', isFahrenheit);
   }
 
   function renderCurrentForecast(APIResponse) {
@@ -340,7 +337,6 @@ window.onload = () => {
 };
 
 window.onbeforeunload = () => {
-  localStorage.setItem('celcius', isCelcius);
-  localStorage.setItem('fahrenheit', isFahrenheit);
+  localStorage.setItem('temp', temperatureType);
   localStorage.setItem('lang', language);
 };
