@@ -38,7 +38,7 @@ window.onload = () => {
   celcButton.addEventListener('click', () => {isCelcius = true; isFahrenheit = false; getForecast(latitude, longitude)});
 
   let refreshButton = document.querySelector('input[name=refresh]');
-  refreshButton.addEventListener('click', () => {console.log(weatherState); loadImage(weatherState);});
+  refreshButton.addEventListener('click', () => {loadImage(weatherState);});
 
   setInterval(function() {
     renderDate(timezone);
@@ -67,32 +67,32 @@ window.onload = () => {
   async function getLocation(){
     const url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${opencagedataAPIkey}&language=en`;
     let data;
-    // try {
-    //   const response = await fetch(url);
-    //   data = await response.json();
-    // } catch (e) {
-    //   console.error(e);
-    // }
-    // let timezone = data.results[0].annotations.timezone.name;
-    // renderLocation(data);
-    // renderDate(timezone);
-
-    data = {
-      city: 'Los Angeles',
-      country: 'United States',
-      timezone: 'Europe/Minsk'
+    try {
+      const response = await fetch(url);
+      data = await response.json();
+    } catch (e) {
+      console.error(e);
     }
-
+    timezone = data.results[0].annotations.timezone.name;
     renderLocation(data);
-    renderDate(data.timezone);
+    renderDate(timezone);
+
+    // data = {
+    //   city: 'Los Angeles',
+    //   country: 'United States',
+    //   timezone: 'Europe/Minsk'
+    // }
+
+    // renderLocation(data);
+    // renderDate(data.timezone);
   }
 
   function renderLocation(APIResponse) {
-    // let city = APIResponse.results[0].components.city || APIResponse.results[0].components.state;
-    // let country = APIResponse.results[0].components.country;
+    let city = APIResponse.results[0].components.city || APIResponse.results[0].components.state;
+    let country = APIResponse.results[0].components.country;
 
-    let city = APIResponse.city;
-    let country = APIResponse.country;
+    // let city = APIResponse.city;
+    // let country = APIResponse.country;
 
     location = `${city},${country}`;
     showLocation(city, country);
@@ -288,10 +288,11 @@ window.onload = () => {
     } catch (e) {
       console.error(e);
     }
+    timezone = data.results[0].annotations.timezone.name;
 
     renderLocation(data);
     renderCoordinates(data);
-    renderDate(data);
+    renderDate(timezone);
   }
 
   function renderCoordinates(APIResponse) {
