@@ -374,6 +374,8 @@ body {
 }
 
 .header {
+  font-family: "Roboto";
+  font-size: 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -436,6 +438,8 @@ body {
   display: flex;
   box-sizing: border-box;
   width: 100%;
+  font-family: "Roboto";
+  font-size: 16px;
 }
 
 .column {

@@ -32,6 +32,7 @@ body {
 }
 
 .header {
+    @include Roboto();
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -94,6 +95,7 @@ body {
     display: flex;
     box-sizing: border-box;
     width: 100%;
+    @include Roboto();
 }
 
 .column {

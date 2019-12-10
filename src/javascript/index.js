@@ -1,58 +1,73 @@
 import '../sass/styles.scss';
-import {ipinfoToken, openWeatherAPIkey, darkskyAPIkey, flickrAPIkey, flickrSecret, mapboxToken, opencagedataAPIkey} from './apikeys.js';
-import {countryNames} from './countrynames.js';
-import markup from './markup.js';
-import icons from "./icons";
 import { type } from 'os';
+import {
+  ipinfoToken, openWeatherAPIkey, darkskyAPIkey, flickrAPIkey, flickrSecret, mapboxToken, opencagedataAPIkey,
+} from './apikeys.js';
+import { countryNames } from './countrynames.js';
+import markup from './markup.js';
+import icons from './icons';
 
-var latitude;
-var longitude;
-var location;
-var timezone = 'Europe/Minsk';
-var date;
-var isCelcius = true;
-var isFahrenheit = false;
-var season;
-var seasons = ['winter', 'winter', 'spring', 'spring', 'spring', 'summer', 'summer', 'summer', 'autumn', 'autumn', 'autumn', 'winter'];
-var partOfDay;
-var weatherState;
+let latitude;
+let longitude;
+let location;
+let timezone = 'Europe/Minsk';
+let date;
+let season;
+const seasons = ['winter', 'winter', 'spring', 'spring', 'spring', 'summer', 'summer', 'summer', 'autumn', 'autumn', 'autumn', 'winter'];
+let partOfDay;
+let weatherState;
+let language = localStorage.getItem('lang') || 'en';
 
 window.onload = () => {
-  let wrapper = document.querySelector(".wrapper");
+  let isCelcius = Boolean(localStorage.getItem('celcius')) || true;
+  let isFahrenheit = Boolean(localStorage.getItem('fahrenheit')) || false;
+
+  const wrapper = document.querySelector('.wrapper');
   wrapper.innerHTML += markup;
-  let image = document.createElement("div");
+  const image = document.createElement('div');
   document.body.prepend(image);
-  image.classList.add("image");
+  image.classList.add('image');
 
-  var day1 = document.querySelector('.weatherForecast--day1');
-  var day2 = document.querySelector('.weatherForecast--day2');
-  var day3 = document.querySelector('.weatherForecast--day3');
+  const day1 = document.querySelector('.weatherForecast--day1');
+  const day2 = document.querySelector('.weatherForecast--day2');
+  const day3 = document.querySelector('.weatherForecast--day3');
 
-  let city = document.querySelector('.header--cityInput input[name=city]');
-  let searchCityButton = document.querySelector('.header--cityInput input[class=search]');
-  searchCityButton.addEventListener('click', () => {getLocationByCity(city.value); city.value = ""; })
+  const city = document.querySelector('.header--cityInput input[name=city]');
+  const searchCityButton = document.querySelector('.header--cityInput input[class=search]');
+  searchCityButton.addEventListener('click', () => { getLocationByCity(city.value); city.value = ''; });
 
-  let fahrButton = document.querySelector('.fahrenheit');
-  fahrButton.addEventListener('click', () => {isFahrenheit = true; isCelcius = false; getForecast(latitude, longitude)});
-  let celcButton = document.querySelector('.celcius');
-  celcButton.addEventListener('click', () => {isCelcius = true; isFahrenheit = false; getForecast(latitude, longitude)});
+  let languageButton = document.querySelector('select[class=languages]');
+  languageButton.addEventListener('change', () => { languageHandler(), false });
+  languageButton.value = language.toUpperCase();
 
-  let refreshButton = document.querySelector('input[name=refresh]');
-  refreshButton.addEventListener('click', () => {loadImage(weatherState);});
+  const fahrButton = document.querySelector('.fahrenheit');
+  fahrButton.addEventListener('click', () => { isFahrenheit = true; isCelcius = false; getForecast(latitude, longitude); });
+  const celcButton = document.querySelector('.celcius');
+  celcButton.addEventListener('click', () => { isCelcius = true; isFahrenheit = false; getForecast(latitude, longitude); });
 
-  setInterval(function() {
+  const refreshButton = document.querySelector('input[name=refresh]');
+  refreshButton.addEventListener('click', () => { loadImage(weatherState); });
+
+  setInterval(() => {
     renderDate(timezone);
   }, 1000);
 
+  async function languageHandler() {
+    language = languageButton.value.toLowerCase();
+    localStorage.setItem('lang', language);
+    await getLocation();
+    await getForecast(latitude, longitude);
+  }
+
   mapboxgl.accessToken = mapboxToken;
-  var map = new mapboxgl.Map({
+  const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v11',
-    zoom: 10
+    zoom: 10,
   });
 
   async function success(pos) {
-    var crd = pos.coords;
+    const crd = pos.coords;
     latitude = crd.latitude.toFixed(2);
     longitude = crd.longitude.toFixed(2);
     map.setCenter([longitude, latitude]);
@@ -60,12 +75,12 @@ window.onload = () => {
     await getForecast(latitude, longitude);
     document.querySelector('.latitude').innerHTML = `Latitude: ${Math.trunc(latitude)}°`;
     document.querySelector('.longitude').innerHTML = `Longitude: ${longitude.toString().slice(3)}'`;
-  };
-  
+  }
+
   navigator.geolocation.getCurrentPosition(success);
 
-  async function getLocation(){
-    const url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${opencagedataAPIkey}&language=en`;
+  async function getLocation() {
+    const url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${opencagedataAPIkey}&language=${language}`;
     let data;
     try {
       const response = await fetch(url);
@@ -88,8 +103,8 @@ window.onload = () => {
   }
 
   function renderLocation(APIResponse) {
-    let city = APIResponse.results[0].components.city || APIResponse.results[0].components.state;
-    let country = APIResponse.results[0].components.country;
+    const city = APIResponse.results[0].components.city || APIResponse.results[0].components.state;
+    const { country } = APIResponse.results[0].components;
 
     // let city = APIResponse.city;
     // let country = APIResponse.country;
@@ -99,22 +114,22 @@ window.onload = () => {
   }
 
   function showLocation(city, country) {
-    document.querySelector(".location").innerHTML = `${city}, ${country}`;
-  } 
+    document.querySelector('.location').innerHTML = `${city}, ${country}`;
+  }
 
   function renderDate(timezone) {
-    const utcDate = new Date(); 
-    let localDate = utcDate.toLocaleString('auto', {localeMatcher: "best fit", timeZone: `${timezone}`});
+    const utcDate = new Date();
+    const localDate = utcDate.toLocaleString('auto', { localeMatcher: 'best fit', timeZone: `${timezone}` });
 
-    let utcDateString = utcDate.toString();
-    let utcDateArr = utcDateString.split(" ");
-    let localDateArr = localDate.split(" ");
+    const utcDateString = utcDate.toString();
+    const utcDateArr = utcDateString.split(' ');
+    const localDateArr = localDate.split(' ');
     showDate(utcDateArr, localDateArr);
 
-    let month = localDateArr[0][3] + localDateArr[0][4];
+    const month = localDateArr[0][3] + localDateArr[0][4];
     season = seasons[month - 1];
 
-    let hour = Number(localDateArr[1][0] + localDateArr[1][1]);
+    const hour = Number(localDateArr[1][0] + localDateArr[1][1]);
     switch (true) {
       case hour >= 5 && hour < 12:
         partOfDay = 'morning';
@@ -129,23 +144,23 @@ window.onload = () => {
         partOfDay = 'night';
         break;
       default:
-        partOfDay = 'afternoon'; 
+        partOfDay = 'afternoon';
     }
   }
 
   function showDate(utcDate, localDate) {
-    let date = `${utcDate[0]} ${utcDate[2]} ${utcDate[1]}`;
-    let time = localDate[1].slice(0, 5);
+    const date = `${utcDate[0]} ${utcDate[2]} ${utcDate[1]}`;
+    const time = localDate[1].slice(0, 5);
     document.querySelector('.date').innerHTML = `${date}   ${time}`;
   }
 
-  async function getForecast(lat, lon){
-    var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+  async function getForecast(lat, lon) {
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
     if (isCelcius) {
-      var targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${lat},${lon}?lang=en&units=si`;
+      var targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${lat},${lon}?lang=${language}&units=si`;
       highlightTempButton(celcButton, fahrButton);
     } else {
-      var targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${latitude},${longitude}?lang=en&units=us`;
+      var targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${latitude},${longitude}?lang=${language}&units=us`;
       highlightTempButton(fahrButton, celcButton);
     }
 
@@ -161,19 +176,21 @@ window.onload = () => {
   }
 
   function highlightTempButton(trueButton, falseButton) {
-    falseButton.classList.remove("highlighted");
-    trueButton.classList.add("highlighted");
+    falseButton.classList.remove('highlighted');
+    trueButton.classList.add('highlighted');
+    localStorage.setItem('celcius', isCelcius);
+    localStorage.setItem('fahrenheit', isFahrenheit);
   }
 
   function renderCurrentForecast(APIResponse) {
-    let forecast = {};
+    const forecast = {};
     forecast.temperature = `${Math.round(APIResponse.currently.temperature)}°`;
     forecast.summary = `${APIResponse.currently.summary}`;
     forecast.apparentTemp = `Feels like: ${Math.round(APIResponse.currently.apparentTemperature)}°`;
     forecast.wind = `Wind: ${APIResponse.currently.windSpeed} m/s`;
     forecast.humidity = `Humidity: ${Math.round(APIResponse.currently.humidity * 100)}%`;
     weatherState = APIResponse.currently.icon;
-    let iconURL = icons[weatherState];
+    const iconURL = icons[weatherState];
     forecast.iconURL = `url(/dist/${iconURL})`;
 
     loadImage(weatherState);
@@ -181,66 +198,66 @@ window.onload = () => {
   }
 
   function showCurrentForecast(forecast) {
-    document.querySelector(".currentWeather--temperature").innerHTML = forecast.temperature;
+    document.querySelector('.currentWeather--temperature').innerHTML = forecast.temperature;
     document.querySelector('.description--summary').innerHTML = forecast.summary;
     document.querySelector('.description--apparentTemp').innerHTML = forecast.apparentTemp;
     document.querySelector('.description--wind').innerHTML = forecast.wind;
     document.querySelector('.description--humidity').innerHTML = forecast.humidity;
     document.querySelector('.currentWeather--image').style.background = forecast.iconURL;
-    document.querySelector('.currentWeather--image').style.backgroundSize = "cover";
+    document.querySelector('.currentWeather--image').style.backgroundSize = 'cover';
   }
 
   function render3daysForecast(APIResponse) {
-    let days = [APIResponse.daily.data[1], APIResponse.daily.data[2], APIResponse.daily.data[3]];
-    let weekdaysNumbers = [];
-    days.forEach(function(day){
-        var unixDate = new Date(day.time * 1000);
-        var weekDay = unixDate.getDay();
-        weekdaysNumbers.push(weekDay);
-    })
+    const days = [APIResponse.daily.data[1], APIResponse.daily.data[2], APIResponse.daily.data[3]];
+    const weekdaysNumbers = [];
+    days.forEach((day) => {
+      const unixDate = new Date(day.time * 1000);
+      const weekDay = unixDate.getDay();
+      weekdaysNumbers.push(weekDay);
+    });
 
     renderWeekday(weekdaysNumbers);
     renderTemperature(APIResponse);
     renderWeatherIcons(APIResponse);
   }
 
-  function renderWeekday (number) {
-    let weekdaysTable = {
+  function renderWeekday(number) {
+    const weekdaysTable = {
       0: 'Sunday',
       1: 'Monday',
       2: 'Tuesday',
       3: 'Wednesday',
       4: 'Thursday',
       5: 'Friday',
-      6: 'Saturday'
-    }
+      6: 'Saturday',
+    };
     if (Array.isArray(number)) {
-      for (let i = 1; i <= number.length; i++){
-        let weekday = weekdaysTable[number[i-1]];
+      for (let i = 1; i <= number.length; i++) {
+        const weekday = weekdaysTable[number[i - 1]];
         document.querySelector(`.weatherForecast--day${i}--weekday`).innerHTML = weekday;
       }
     }
   }
 
-  function renderTemperature(temperatureData){
-    let temperature = {};
-    let dayOne = temperatureData.daily.data[1];
-    let dayTwo = temperatureData.daily.data[2];
-    let dayThree = temperatureData.daily.data[3];
+  function renderTemperature(temperatureData) {
+    const temperature = {};
+    const dayOne = temperatureData.daily.data[1];
+    const dayTwo = temperatureData.daily.data[2];
+    const dayThree = temperatureData.daily.data[3];
     temperature.day1 = Math.round((dayOne.temperatureMax + dayOne.temperatureMin) / 2);
     temperature.day2 = Math.round((dayTwo.temperatureMax + dayTwo.temperatureMin) / 2);
     temperature.day3 = Math.round((dayThree.temperatureMax + dayThree.temperatureMin) / 2);
     show3daysTemperature(temperature);
   }
 
-  function renderWeatherIcons (forecast) {
+  function renderWeatherIcons(forecast) {
     let iconName;
     let iconURL;
-    for (let i = 1; i <= 3; i++){
+    for (let i = 1; i <= 3; i++) {
       iconName = forecast.daily.data[i].icon;
       iconURL = icons[iconName];
       document.querySelector(`.weatherForecast--day${i}--image`).style.background = `url(/dist/${iconURL})`;
-      document.querySelector(`.weatherForecast--day${i}--image`).style.backgroundSize = "cover";
+      document.querySelector(`.weatherForecast--day${i}--image`).style.backgroundSize = 'cover';
     }
   }
 
@@ -262,25 +279,25 @@ window.onload = () => {
     } catch (e) {
       console.error(e);
     }
-    
+
     renderImage(data);
   }
 
   function renderImage(APIResponse) {
-    let imageNumber = Math.floor(Math.random() * APIResponse.photos.photo.length);
-    let image = APIResponse.photos.photo[imageNumber];
-    let url = image.url_o || image.url_h || `https://farm${image.farm}.staticflickr.com/${image.server}/${image.id}_${image.secret}_b.jpg`;
+    const imageNumber = Math.floor(Math.random() * APIResponse.photos.photo.length);
+    const image = APIResponse.photos.photo[imageNumber];
+    const url = image.url_o || image.url_h || `https://farm${image.farm}.staticflickr.com/${image.server}/${image.id}_${image.secret}_b.jpg`;
 
     showImage(url);
   }
 
   function showImage(imageURL) {
-    let image = document.querySelector('.image');
+    const image = document.querySelector('.image');
     image.style.backgroundImage = `url(${imageURL})`;
   }
 
-  async function getLocationByCity(cityInput){
-    const url = `https://api.opencagedata.com/geocode/v1/json?q=${cityInput}&key=${opencagedataAPIkey}&language=en`;
+  async function getLocationByCity(cityInput) {
+    const url = `https://api.opencagedata.com/geocode/v1/json?q=${cityInput}&key=${opencagedataAPIkey}&language=${language}`;
     let data;
     try {
       const response = await fetch(url);
@@ -306,8 +323,8 @@ window.onload = () => {
     getForecast(latitude, longitude);
   }
 
-  
-  /*async function getLocation(){
+
+  /* async function getLocation(){
     const url = `https://ipinfo.io/json?token=${ipinfoToken}`;
     let data;
     try {
@@ -319,10 +336,11 @@ window.onload = () => {
     let city = data.city;
     let country = countryNames[data.country];
     document.querySelector(".currentWeather").innerHTML = `${city},${country}`;
-  }*/
-
+  } */
 };
 
 window.onbeforeunload = () => {
-  
+  localStorage.setItem('celcius', isCelcius);
+  localStorage.setItem('fahrenheit', isFahrenheit);
+  localStorage.setItem('lang', language);
 };

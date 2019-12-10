@@ -1,8 +1,8 @@
-let markup = `
+const markup = `
 <header class="header">
     <div class="header--options">
       <input type="submit" name="refresh" alt="refresh" class="refresh" value=" " title ="Refresh">
-      <select>
+      <select class="languages">
         <option value="EN">EN</option>
         <option value="RU">RU</option>
         <option value="BE">BE</option>
@@ -53,5 +53,5 @@ let markup = `
           <div class="latitude"></div>
           <div class="longitude"></div>
         </div>
-      </div> </main>`
+      </div> </main>`;
 export default markup;
