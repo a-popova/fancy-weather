@@ -6,6 +6,7 @@ import {
 import { countryNames } from './countrynames.js';
 import markup from './markup.js';
 import icons from './icons';
+import Translator from './translator';
 
 let latitude;
 let longitude;
@@ -90,23 +91,11 @@ window.onload = () => {
     timezone = data.results[0].annotations.timezone.name;
     renderLocation(data);
     renderDate(timezone);
-
-    // data = {
-    //   city: 'Los Angeles',
-    //   country: 'United States',
-    //   timezone: 'Europe/Minsk'
-    // }
-
-    // renderLocation(data);
-    // renderDate(data.timezone);
   }
 
   function renderLocation(APIResponse) {
     const city = APIResponse.results[0].components.city || APIResponse.results[0].components.state;
     const { country } = APIResponse.results[0].components;
-
-    // let city = APIResponse.city;
-    // let country = APIResponse.country;
 
     location = `${city},${country}`;
     showLocation(city, country);
@@ -148,7 +137,9 @@ window.onload = () => {
   }
 
   function showDate(utcDate, localDate) {
-    const date = `${utcDate[0]} ${utcDate[2]} ${utcDate[1]}`;
+    let obj = new Translator(language);
+    let weekday = obj.get(utcDate[0]);
+    const date = `${weekday} ${utcDate[2]} ${utcDate[1]}`;
     const time = localDate[1].slice(0, 5);
     document.querySelector('.date').innerHTML = `${date}   ${time}`;
   }
@@ -180,12 +171,17 @@ window.onload = () => {
   }
 
   function renderCurrentForecast(APIResponse) {
+    let obj = new Translator(language);
+    let tempFeels = obj.get('temp');
+    let wind = obj.get('wind');
+    let humidity = obj.get('hum');
+
     const forecast = {};
     forecast.temperature = `${Math.round(APIResponse.currently.temperature)}°`;
     forecast.summary = `${APIResponse.currently.summary}`;
-    forecast.apparentTemp = `Feels like: ${Math.round(APIResponse.currently.apparentTemperature)}°`;
-    forecast.wind = `Wind: ${APIResponse.currently.windSpeed} m/s`;
-    forecast.humidity = `Humidity: ${Math.round(APIResponse.currently.humidity * 100)}%`;
+    forecast.apparentTemp = `${tempFeels}${Math.round(APIResponse.currently.apparentTemperature)}°`;
+    forecast.wind = `${wind}${APIResponse.currently.windSpeed} m/s`;
+    forecast.humidity = `${humidity}${Math.round(APIResponse.currently.humidity * 100)}%`;
     weatherState = APIResponse.currently.icon;
     const iconURL = icons[weatherState];
     forecast.iconURL = `url(/dist/${iconURL})`;
@@ -220,17 +216,18 @@ window.onload = () => {
 
   function renderWeekday(number) {
     const weekdaysTable = {
-      0: 'Sunday',
-      1: 'Monday',
-      2: 'Tuesday',
-      3: 'Wednesday',
-      4: 'Thursday',
-      5: 'Friday',
-      6: 'Saturday',
+      0: 'Sun',
+      1: 'Mon',
+      2: 'Tue',
+      3: 'Wed',
+      4: 'Thu',
+      5: 'Fri',
+      6: 'Sat',
     };
+    let obj = new Translator(language);
     if (Array.isArray(number)) {
       for (let i = 1; i <= number.length; i++) {
-        const weekday = weekdaysTable[number[i - 1]];
+        const weekday = obj.get(weekdaysTable[number[i - 1]]);
         document.querySelector(`.weatherForecast--day${i}--weekday`).innerHTML = weekday;
       }
     }

@@ -22,3 +22,4 @@ const russian = {
   wind: 'Ветер: ',
   hum: 'Влажность: '
 }
+export default russian;

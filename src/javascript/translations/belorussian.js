@@ -22,3 +22,4 @@ const belorussian = {
   wind: 'Вецер: ',
   hum: 'Вільготнасць: '
 }
+export default belorussian;

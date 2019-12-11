@@ -22,3 +22,4 @@ const english = {
   wind: 'Wind: ',
   hum: 'Humidity: '
 }
+export default english;
