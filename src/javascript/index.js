@@ -1,7 +1,7 @@
 import '../sass/styles.scss';
 import { type } from 'os';
 import {
-  ipinfoToken, openWeatherAPIkey, darkskyAPIkey, flickrAPIkey, mapboxToken, opencagedataAPIkey,
+  ipinfoToken, darkskyAPIkey, flickrAPIkey, mapboxToken, opencagedataAPIkey 
 } from './apikeys.js';
 import { countryNames } from './countrynames.js';
 import markup from './markup.js';
@@ -55,7 +55,7 @@ window.onload = () => {
   async function languageHandler() {
     language = languageButton.value.toLowerCase();
     localStorage.setItem('lang', language);
-    await getLocation();
+    await getLocationByCoordinates();
     await getForecast(latitude, longitude);
   }
 
@@ -67,19 +67,23 @@ window.onload = () => {
   });
 
   async function success(pos) {
-    const crd = pos.coords;
-    latitude = crd.latitude.toFixed(2);
-    longitude = crd.longitude.toFixed(2);
-    map.setCenter([longitude, latitude]);
-    await getLocation();
-    await getForecast(latitude, longitude);
-    document.querySelector('.latitude').innerHTML = `Latitude: ${Math.trunc(latitude)}°`;
-    document.querySelector('.longitude').innerHTML = `Longitude: ${longitude.toString().slice(3)}'`;
+    if (pos) {
+      const crd = pos.coords;
+      latitude = crd.latitude.toFixed(2);
+      longitude = crd.longitude.toFixed(2);
+      map.setCenter([longitude, latitude]);
+      await getLocationByCoordinates();
+      await getForecast(latitude, longitude);
+      document.querySelector('.latitude').innerHTML = `Latitude: ${Math.trunc(latitude)}°`;
+      document.querySelector('.longitude').innerHTML = `Longitude: ${longitude.toString().slice(3)}'`;
+    } else {
+      getPositionByIP();
+    }
   }
 
   navigator.geolocation.getCurrentPosition(success);
 
-  async function getLocation() {
+  async function getLocationByCoordinates() {
     const url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${opencagedataAPIkey}&language=${language}`;
     let data;
     try {
@@ -318,7 +322,7 @@ window.onload = () => {
   }
 
 
-  /* async function getLocation(){
+  async function getPositionByIP(){
     const url = `https://ipinfo.io/json?token=${ipinfoToken}`;
     let data;
     try {
@@ -328,9 +332,9 @@ window.onload = () => {
       console.error(e);
     }
     let city = data.city;
-    let country = countryNames[data.country];
-    document.querySelector(".currentWeather").innerHTML = `${city},${country}`;
-  } */
+
+    getLocationByCity(city);
+  }
 };
 
 window.onbeforeunload = () => {
