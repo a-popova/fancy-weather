@@ -22,8 +22,6 @@ let temperatureType = localStorage.getItem('temp') || 'celcius';
 
 window.onload = () => {
 
-  recogniseSpeech();
-
   const wrapper = document.querySelector('.wrapper');
   wrapper.innerHTML += markup;
   const image = document.createElement('div');
@@ -35,6 +33,7 @@ window.onload = () => {
   const day3 = document.querySelector('.weatherForecast--day3');
 
   const city = document.querySelector('.header--cityInput input[name=city]');
+  city.addEventListener('click', recogniseSpeech);
   const searchCityButton = document.querySelector('.header--cityInput input[class=search]');
   searchCityButton.addEventListener('click', () => { getLocationByCity(city.value); city.value = ''; });
 
@@ -208,7 +207,7 @@ window.onload = () => {
 
   function render3daysForecast(APIResponse) {
     const days = [APIResponse.daily.data[1], APIResponse.daily.data[2], APIResponse.daily.data[3]];
-    const weekdaysNumbers = [];
+    const weekdaysNumbers = []; 
     days.forEach((day) => {
       const unixDate = new Date(day.time * 1000);
       const weekDay = unixDate.getDay();
@@ -271,8 +270,6 @@ window.onload = () => {
     const baseUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${flickrAPIkey}`;
     const params = `&lat=${latitude}&lon=${longitude}&tags=${partOfDay},${season},${weatherState}&geo_context=2&format=json&nojsoncallback=1&extras=url_o`;
     const url = baseUrl + params;
-
-    console.log(url);
 
     let data;
     try {

@@ -389,6 +389,7 @@ body {
 .header--options input {
   height: 40px;
   width: 40px;
+  border: none;
 }
 .header--options input:hover {
   background-color: lightgray;
@@ -417,10 +418,28 @@ body {
 }
 .header--cityInput input {
   height: 40px;
+  border: none;
+}
+.header--cityInput .speech {
+  display: inline-block;
+  position: relative;
+}
+.header--cityInput .speech::before {
+  content: "";
+  background-image: url(images/9a22ddb3c86e37c48ba494da2d92a1a7.png);
+  background-size: cover;
+  height: 30px;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  top: calc(15%);
+  width: 30px;
+  z-index: 1;
 }
 .header--cityInput input[type=text] {
+  position: relative;
   box-sizing: border-box;
-  padding-left: 10px;
+  padding-left: 40px;
   font-size: 18px;
 }
 .header--cityInput input[type=submit] {

@@ -11,7 +11,7 @@ const markup = `
       <input type="submit" name="tempC" class="celcius" value="°C">
     </div>
     <div class="header--cityInput">
-      <input type="text" name="city" placeholder="Search city">
+      <span for="text" class="speech"><input id ="text" type="text" name="city" placeholder="Search city"></span>
       <input type="submit" name="search" class="search" value="SEARCH">
     </div>  </header>
     <main class="main">
