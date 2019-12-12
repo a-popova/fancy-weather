@@ -22,6 +22,8 @@ let temperatureType = localStorage.getItem('temp') || 'celcius';
 
 window.onload = () => {
 
+  recogniseSpeech();
+
   const wrapper = document.querySelector('.wrapper');
   wrapper.innerHTML += markup;
   const image = document.createElement('div');
@@ -46,7 +48,7 @@ window.onload = () => {
   celcButton.addEventListener('click', () => { temperatureType = 'celcius'; getForecast(latitude, longitude); });
 
   const refreshButton = document.querySelector('input[name=refresh]');
-  refreshButton.addEventListener('click', () => { loadImage(weatherState); });
+  refreshButton.addEventListener('click', () => { loadImage(); });
 
   setInterval(() => {
     renderDate(timezone);
@@ -165,7 +167,8 @@ window.onload = () => {
       console.error(e);
     }
 
-    renderCurrentForecast(data);
+    await renderCurrentForecast(data);
+    await loadImage();
     render3daysForecast(data);
   }
 
@@ -190,7 +193,6 @@ window.onload = () => {
     const iconURL = icons[weatherState];
     forecast.iconURL = `url(/dist/${iconURL})`;
 
-    loadImage(weatherState);
     showCurrentForecast(forecast);
   }
 
@@ -265,10 +267,12 @@ window.onload = () => {
     document.querySelector('.weatherForecast--day3--temp').innerHTML = `${temperature.day3}°`;
   }
 
-  async function loadImage(tag) {
+  async function loadImage() {
     const baseUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${flickrAPIkey}`;
-    const params = `&lat=${latitude}&lon=${longitude}&tags=${partOfDay},${season},${tag}&geo_context=2&format=json&nojsoncallback=1&extras=url_o`;
+    const params = `&lat=${latitude}&lon=${longitude}&tags=${partOfDay},${season},${weatherState}&geo_context=2&format=json&nojsoncallback=1&extras=url_o`;
     const url = baseUrl + params;
+
+    console.log(url);
 
     let data;
     try {
@@ -335,6 +339,25 @@ window.onload = () => {
 
     getLocationByCity(city);
   }
+
+  function recogniseSpeech() {
+    window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.addEventListener('result', async (event) => { 
+      const transcript = Array.from(event.results)
+        .map(result => result[0])
+        .map(result => result.transcript)
+        .join(' ') 
+
+      await console.log(transcript);
+      city.value = transcript;
+      await getLocationByCity(city.value);
+    });
+    recognition.addEventListener('end', recognition.start);
+    recognition.start();
+  }
+  
 };
 
 window.onbeforeunload = () => {
