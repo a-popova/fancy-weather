@@ -10,18 +10,20 @@ import Sleet from '../images/sleet.png';
 import Snow from '../images/snow.png';
 import Thunderstorm from '../images/thunderstorm.png';
 import Tornado from '../images/tornado.png';
+import Wind from '../images/wind.png';
 
 export default {
   'clear-day': ClearDay,
   'partly-cloudy-day': PartlyCloudyDay,
   'partly-cloudy-night': PartlyCloudyNight,
   'clear-night': ClearNight,
-  cloudy: Cloudy,
-  fog: Fog,
-  hail: Hail,
-  rain: Rain,
-  sleet: Sleet,
-  snow: Snow,
-  thunderstorm: Thunderstorm,
-  tornado: Tornado,
+  'cloudy': Cloudy,
+  'fog': Fog,
+  'hail': Hail,
+  'rain': Rain,
+  'sleet': Sleet,
+  'snow': Snow,
+  'thunderstorm': Thunderstorm,
+  'tornado': Tornado,
+  'wind': Wind
 };

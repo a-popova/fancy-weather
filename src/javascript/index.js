@@ -254,6 +254,7 @@ window.onload = () => {
     let iconURL;
     for (let i = 1; i <= 3; i++) {
       iconName = forecast.daily.data[i].icon;
+      console.log(iconName)
       iconURL = icons[iconName];
       document.querySelector(`.weatherForecast--day${i}--image`).style.background = `url(/dist/${iconURL})`;
       document.querySelector(`.weatherForecast--day${i}--image`).style.backgroundSize = 'cover';

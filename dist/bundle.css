@@ -399,6 +399,7 @@ body {
   width: 60px;
   height: 40px;
   margin-right: 10px;
+  border: none;
 }
 .header--options input[class=refresh] {
   background-color: white;
