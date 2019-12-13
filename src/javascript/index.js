@@ -79,10 +79,10 @@ window.onload = () => {
     document.querySelector('.date').innerHTML = `${date}   ${time}`;
   }
 
-  setInterval(() => {
-    const dateInfo = extractDate(timezone);
-    showDate(dateInfo.utcDateArr, dateInfo.localDateArr);
-  }, 1000);
+  var updateTime = setInterval(() => {
+      const dateInfo = extractDate(timezone);
+      showDate(dateInfo.utcDateArr, dateInfo.localDateArr);
+    }, 1000);
 
   function updateCoordinates(APIResponse) {
     latitude = APIResponse.results[0].geometry.lat;
@@ -151,6 +151,7 @@ window.onload = () => {
   }
 
   async function processOpenCageDataResponse(APIResponse) {
+    clearInterval(updateTime);
     updateCoordinates(APIResponse);
 
     timezone = APIResponse.results[0].annotations.timezone.name;
@@ -163,6 +164,10 @@ window.onload = () => {
     forecast = await getForecast(locationInfo);
     const imageData = await fetchFlickrImage(locationInfo, forecast);
     showImage(imageData.backgroundImageUrl);
+    setInterval(() => {
+      const dateInfo = extractDate(timezone);
+      showDate(dateInfo.utcDateArr, dateInfo.localDateArr);
+    }, 1000);
     showCurrentForecast(forecast);
     renderLocation(APIResponse);
     updateMap(locationInfo);
@@ -302,7 +307,6 @@ window.onload = () => {
     const imageData = await fetchFlickrImage(locationInfo, forecast);
     showImage(imageData.backgroundImageUrl);
   }
-
 
   function recogniseSpeech() {
     window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
