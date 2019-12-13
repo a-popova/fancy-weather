@@ -22,6 +22,6 @@ const english = {
   wind: 'Wind: ',
   hum: 'Humidity: ',
   lat: 'Latitude: ',
-  lon: 'Longitude: '
-}
+  lon: 'Longitude: ',
+};
 export default english;

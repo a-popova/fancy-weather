@@ -1,7 +1,7 @@
 import '../sass/styles.scss';
 import { type } from 'os';
 import {
-  ipinfoToken, darkskyAPIkey, flickrAPIkey, mapboxToken, opencagedataAPIkey 
+  ipinfoToken, darkskyAPIkey, flickrAPIkey, mapboxToken, opencagedataAPIkey,
 } from './apikeys.js';
 import markup from './markup.js';
 import icons from './icons';
@@ -9,17 +9,14 @@ import Translator from './translator';
 
 let latitude;
 let longitude;
-let location;
 let timezone = 'Europe/Minsk';
-let date;
 let forecast;
 let locationInfo;
 const seasons = ['winter', 'winter', 'spring', 'spring', 'spring', 'summer', 'summer', 'summer', 'autumn', 'autumn', 'autumn', 'winter'];
 let language = localStorage.getItem('lang') || 'en';
-let temperatureType = localStorage.getItem('temp') || 'celcius'; 
+let temperatureType = localStorage.getItem('temp') || 'celcius';
 
 window.onload = () => {
-
   const wrapper = document.querySelector('.wrapper');
   wrapper.innerHTML += markup;
   const image = document.createElement('div');
@@ -27,18 +24,23 @@ window.onload = () => {
   image.classList.add('image');
 
   const city = document.querySelector('.header--cityInput input[name=city]');
-  city.addEventListener('click', recogniseSpeech);
+  city.addEventListener('click', () => recogniseSpeech());
+  city.addEventListener('keydown', (event) => {
+    if (event.keyCode === 13) {
+      getLocationByCity(city.value);
+    }
+  });
   const searchCityButton = document.querySelector('.header--cityInput input[class=search]');
   searchCityButton.addEventListener('click', () => { getLocationByCity(city.value); city.value = ''; });
 
-  let languageButton = document.querySelector('select[class=languages]');
-  languageButton.addEventListener('change', () => { languageHandler(), false });
+  const languageButton = document.querySelector('select[class=languages]');
+  languageButton.addEventListener('change', () => { languageHandler(), false; });
   languageButton.value = language.toUpperCase();
 
   const fahrButton = document.querySelector('.fahrenheit');
-  fahrButton.addEventListener('click', async () => { temperatureType = 'fahrenheit'; showCurrentForecast(await getForecast({latitude, longitude})); });
+  fahrButton.addEventListener('click', async () => { temperatureType = 'fahrenheit'; showCurrentForecast(await getForecast({ latitude, longitude })); });
   const celcButton = document.querySelector('.celcius');
-  celcButton.addEventListener('click', async () => { temperatureType = 'celcius'; showCurrentForecast(await getForecast({latitude, longitude})); });
+  celcButton.addEventListener('click', async () => { temperatureType = 'celcius'; showCurrentForecast(await getForecast({ latitude, longitude })); });
 
   const refreshButton = document.querySelector('input[name=refresh]');
   refreshButton.addEventListener('click', () => { loadImage(); });
@@ -107,10 +109,10 @@ window.onload = () => {
       latitude,
       longitude,
     };
-    
+
     forecast = await getForecast(locationInfo);
     const imageData = await fetchFlickrImage(locationInfo, forecast);
-    showImage(imageData.backgroundImageUrl);  
+    showImage(imageData.backgroundImageUrl);
     showCurrentForecast(forecast);
     renderLocation(APIResponse);
     updateMap(locationInfo);
@@ -123,9 +125,9 @@ window.onload = () => {
 
   function updateMap(locationInfo) {
     map.setCenter([locationInfo.longitude, locationInfo.latitude]);
-    let translator = new Translator(language);
-    let latitude = translator.get('lat');
-    let longitude = translator.get('lon');
+    const translator = new Translator(language);
+    const latitude = translator.get('lat');
+    const longitude = translator.get('lon');
     document.querySelector('.latitude').innerHTML = `${latitude}${Math.trunc(locationInfo.latitude)}°`;
     document.querySelector('.longitude').innerHTML = `${longitude}${Math.trunc(locationInfo.longitude)}'`;
   }
@@ -134,7 +136,6 @@ window.onload = () => {
     const city = APIResponse.results[0].components.city || APIResponse.results[0].components.state;
     const { country } = APIResponse.results[0].components;
 
-    location = `${city},${country}`;
     document.querySelector('.location').innerHTML = `${city}, ${country}`;
   }
 
@@ -168,16 +169,16 @@ window.onload = () => {
         partOfDay = 'afternoon';
     }
     return {
-      partOfDay, 
+      partOfDay,
       season,
       utcDateArr,
-      localDateArr
+      localDateArr,
     };
   }
 
   function showDate(utcDate, localDate) {
-    let translator = new Translator(language);
-    let weekday = translator.get(utcDate[0]);
+    const translator = new Translator(language);
+    const weekday = translator.get(utcDate[0]);
     const date = `${weekday} ${utcDate[2]} ${utcDate[1]}`;
     const time = localDate[1].slice(0, 5);
     document.querySelector('.date').innerHTML = `${date}   ${time}`;
@@ -187,10 +188,10 @@ window.onload = () => {
     const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
     let targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${locationInfo.latitude},${locationInfo.longitude}?lang=${language}`;
     if (temperatureType === 'celcius') {
-      targetUrl += "&units=si";
+      targetUrl += '&units=si';
       highlightTempButton(celcButton, fahrButton);
     } else {
-      targetUrl += "&units=us";
+      targetUrl += '&units=us';
       highlightTempButton(fahrButton, celcButton);
     }
 
@@ -210,10 +211,10 @@ window.onload = () => {
   }
 
   function extractForecastData(APIResponse) {
-    let translator = new Translator(language);
-    let tempFeels = translator.get('temp');
-    let wind = translator.get('wind');
-    let humidity = translator.get('hum');
+    const translator = new Translator(language);
+    const tempFeels = translator.get('temp');
+    const wind = translator.get('wind');
+    const humidity = translator.get('hum');
 
     const forecast = {};
     forecast.temperature = `${Math.round(APIResponse.currently.temperature)}°`;
@@ -262,7 +263,7 @@ window.onload = () => {
       5: 'Fri',
       6: 'Sat',
     };
-    let obj = new Translator(language);
+    const obj = new Translator(language);
     const weekday = obj.get(weekdaysTable[weekDay]);
     document.querySelector(`.weatherForecast--day${index}--weekday`).innerHTML = weekday;
   }
@@ -282,13 +283,12 @@ window.onload = () => {
     const params = `&lat=${location.latitude}&lon=${location.longitude}&tags=${location.partOfDay},${location.season},${forecast.weatherState}&geo_context=2&format=json&nojsoncallback=1&extras=url_o`;
     const url = baseUrl + params;
 
-    let data;
     try {
       const response = await fetch(url);
       const data = await response.json();
-      
+
       return {
-        backgroundImageUrl: extractImageUrl(data)
+        backgroundImageUrl: extractImageUrl(data),
       };
     } catch (e) {
       console.error(e);
@@ -303,7 +303,7 @@ window.onload = () => {
 
   async function loadImage() {
     const imageData = await fetchFlickrImage(locationInfo, forecast);
-    showImage(imageData.backgroundImageUrl);  
+    showImage(imageData.backgroundImageUrl);
   }
 
   function showImage(imageURL) {
@@ -311,7 +311,7 @@ window.onload = () => {
     image.style.backgroundImage = `url(${imageURL})`;
   }
 
-  async function getPositionByIP(){
+  async function getPositionByIP() {
     const url = `https://ipinfo.io/json?token=${ipinfoToken}`;
     let data;
     try {
@@ -320,7 +320,7 @@ window.onload = () => {
     } catch (e) {
       console.error(e);
     }
-    let city = data.city;
+    const { city } = data;
 
     getLocationByCity(city);
   }
@@ -329,13 +329,12 @@ window.onload = () => {
     window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
     recognition.lang = 'en-US';
-    recognition.addEventListener('result', async (event) => { 
+    recognition.addEventListener('result', async (event) => {
       const transcript = Array.from(event.results)
-        .map(result => result[0])
-        .map(result => result.transcript)
-        .join(' ') 
+        .map((result) => result[0])
+        .map((result) => result.transcript)
+        .join(' ');
 
-      await console.log(transcript);
       city.value = transcript;
       await getLocationByCity(city.value);
     });

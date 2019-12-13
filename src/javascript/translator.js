@@ -12,6 +12,7 @@ export default class Translator {
       this.translations = belorussian;
     }
   }
+
   get(word) {
     return this.translations[word];
   }

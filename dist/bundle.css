@@ -400,6 +400,7 @@ body {
   height: 40px;
   margin-right: 10px;
   border: none;
+  cursor: pointer;
 }
 .header--options input[class=refresh] {
   background-color: white;
@@ -505,8 +506,8 @@ body {
   width: 120px;
   height: 120px;
   position: absolute;
-  left: 15%;
-  bottom: 50%;
+  left: 17%;
+  bottom: 60%;
 }
 .column.left .currentWeather--description {
   font-size: 28px;

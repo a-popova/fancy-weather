@@ -22,6 +22,6 @@ const russian = {
   wind: 'Ветер: ',
   hum: 'Влажность: ',
   lat: 'Широта: ',
-  lon: 'Долгота: '
-}
+  lon: 'Долгота: ',
+};
 export default russian;
