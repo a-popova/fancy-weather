@@ -20,6 +20,8 @@ const english = {
   Dec: 'Dec',
   temp: 'Feels Like: ',
   wind: 'Wind: ',
-  hum: 'Humidity: '
+  hum: 'Humidity: ',
+  lat: 'Latitude: ',
+  lon: 'Longitude: '
 }
 export default english;

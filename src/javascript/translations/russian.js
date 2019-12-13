@@ -20,6 +20,8 @@ const russian = {
   Dec: 'дек',
   temp: 'Ощущается как: ',
   wind: 'Ветер: ',
-  hum: 'Влажность: '
+  hum: 'Влажность: ',
+  lat: 'Широта: ',
+  lon: 'Долгота: '
 }
 export default russian;

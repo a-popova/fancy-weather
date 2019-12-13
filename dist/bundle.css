@@ -531,6 +531,7 @@ body {
 .column.left .weatherForecast--day1--image, .column.left .weatherForecast--day2--image, .column.left .weatherForecast--day3--image {
   width: 100px;
   height: 100px;
+  background-size: cover;
 }
 .column.left .weatherForecast--day1--temp, .column.left .weatherForecast--day2--temp, .column.left .weatherForecast--day3--temp {
   font-size: 46px;

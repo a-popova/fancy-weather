@@ -20,6 +20,8 @@ const belorussian = {
   Dec: 'Сне',
   temp: 'Адчуваецца як: ',
   wind: 'Вецер: ',
-  hum: 'Вільготнасць: '
+  hum: 'Вільготнасць: ',
+  lat: 'Шырата: ',
+  lon: 'Даўгата: '
 }
 export default belorussian;
