@@ -36,7 +36,7 @@ window.onload = () => {
 
   function extractDate(timezone) {
     const utcDate = new Date();
-    const localDate = utcDate.toLocaleString('auto', { localeMatcher: 'best fit', timeZone: `${timezone}` });
+    const localDate = utcDate.toLocaleString('be', { localeMatcher: 'best fit', timeZone: `${timezone}` });
 
     const utcDateString = utcDate.toString();
     const utcDateArr = utcDateString.split(' ');
@@ -117,8 +117,8 @@ window.onload = () => {
       5: 'Fri',
       6: 'Sat',
     };
-    const obj = new Translator(language);
-    const weekday = obj.get(weekdaysTable[weekDay]);
+    const translator = new Translator(language);
+    const weekday = translator.get(weekdaysTable[weekDay]);
     document.querySelector(`.weatherForecast--day${index}--weekday`).innerHTML = weekday;
   }
 
