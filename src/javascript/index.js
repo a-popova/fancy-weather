@@ -22,7 +22,7 @@ window.onload = () => {
   document.body.prepend(image);
   image.classList.add('image');
 
-  const city = document.querySelector('.header--cityInput input[name=city]');
+  const cityInput = document.querySelector('.header--cityInput input[name=city]');
   const searchCityButton = document.querySelector('.header--cityInput input[class=search]');
   const fahrButton = document.querySelector('.fahrenheit');
   const celcButton = document.querySelector('.celcius');
@@ -79,10 +79,10 @@ window.onload = () => {
     document.querySelector('.date').innerHTML = `${date}   ${time}`;
   }
 
-  var updateTime = setInterval(() => {
-      const dateInfo = extractDate(timezone);
-      showDate(dateInfo.utcDateArr, dateInfo.localDateArr);
-    }, 1000);
+  let updateTime = setInterval(() => {
+    const dateInfo = extractDate(timezone);
+    showDate(dateInfo.utcDateArr, dateInfo.localDateArr);
+  }, 1000);
 
   function updateCoordinates(APIResponse) {
     latitude = APIResponse.results[0].geometry.lat;
@@ -92,10 +92,10 @@ window.onload = () => {
   function updateMap(locationInfo) {
     map.setCenter([locationInfo.longitude, locationInfo.latitude]);
     const translator = new Translator(language);
-    const latitude = translator.get('lat');
-    const longitude = translator.get('lon');
-    document.querySelector('.latitude').innerHTML = `${latitude}${Math.trunc(locationInfo.latitude)}°`;
-    document.querySelector('.longitude').innerHTML = `${longitude}${Math.trunc(locationInfo.longitude)}'`;
+    const latName = translator.get('lat');
+    const lonName = translator.get('lon');
+    document.querySelector('.latitude').innerHTML = `${latName}${Math.trunc(locationInfo.latitude)}°`;
+    document.querySelector('.longitude').innerHTML = `${lonName}${Math.trunc(locationInfo.longitude)}'`;
   }
 
   function renderLocation(APIResponse) {
@@ -150,53 +150,6 @@ window.onload = () => {
     renderDaysForecast(forecast.days);
   }
 
-  async function processOpenCageDataResponse(APIResponse) {
-    clearInterval(updateTime);
-    updateCoordinates(APIResponse);
-
-    timezone = APIResponse.results[0].annotations.timezone.name;
-    locationInfo = {
-      ...extractDate(timezone),
-      latitude,
-      longitude,
-    };
-
-    forecast = await getForecast(locationInfo);
-    const imageData = await fetchFlickrImage(locationInfo, forecast);
-    showImage(imageData.backgroundImageUrl);
-    setInterval(() => {
-      const dateInfo = extractDate(timezone);
-      showDate(dateInfo.utcDateArr, dateInfo.localDateArr);
-    }, 1000);
-    showCurrentForecast(forecast);
-    renderLocation(APIResponse);
-    updateMap(locationInfo);
-  }
-
-  async function getLocationByCity(cityInput) {
-    const url = `https://api.opencagedata.com/geocode/v1/json?q=${cityInput}&key=${opencagedataAPIkey}&language=${language}`;
-    let data;
-    try {
-      const response = await fetch(url);
-      data = await response.json();
-    } catch (e) {
-      console.error(e);
-    }
-    processOpenCageDataResponse(data);
-  }
-
-  async function getLocationByCoordinates(latitude, longitude) {
-    const url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${opencagedataAPIkey}&language=${language}`;
-    let data;
-    try {
-      const response = await fetch(url);
-      data = await response.json();
-    } catch (e) {
-      console.error(e);
-    }
-    processOpenCageDataResponse(data);
-  }
-
   async function getPositionByIP() {
     const url = `https://ipinfo.io/json?token=${ipinfoToken}`;
     let data;
@@ -214,8 +167,8 @@ window.onload = () => {
   async function success(pos) {
     if (pos) {
       const crd = pos.coords;
-      const latitude = crd.latitude.toFixed(2);
-      const longitude = crd.longitude.toFixed(2);
+      latitude = crd.latitude.toFixed(2);
+      longitude = crd.longitude.toFixed(2);
       await getLocationByCoordinates(latitude, longitude);
     } else {
       getPositionByIP();
@@ -298,6 +251,53 @@ window.onload = () => {
     }
   }
 
+  async function processOpenCageDataResponse(APIResponse) {
+    clearInterval(updateTime);
+    updateCoordinates(APIResponse);
+
+    timezone = APIResponse.results[0].annotations.timezone.name;
+    locationInfo = {
+      ...extractDate(timezone),
+      latitude,
+      longitude,
+    };
+
+    forecast = await getForecast(locationInfo);
+    const imageData = await fetchFlickrImage(locationInfo, forecast);
+    await showImage(imageData.backgroundImageUrl);
+    updateTime = setInterval(() => {
+      const dateInfo = extractDate(timezone);
+      showDate(dateInfo.utcDateArr, dateInfo.localDateArr);
+    }, 1000);
+    showCurrentForecast(forecast);
+    renderLocation(APIResponse);
+    updateMap(locationInfo);
+  }
+
+  async function getLocationByCity(cityInputValue) {
+    const url = `https://api.opencagedata.com/geocode/v1/json?q=${cityInputValue}&key=${opencagedataAPIkey}&language=${language}`;
+    let data;
+    try {
+      const response = await fetch(url);
+      data = await response.json();
+    } catch (e) {
+      console.error(e);
+    }
+    processOpenCageDataResponse(data);
+  }
+
+  async function getLocationByCoordinates(lat, lon) {
+    const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${opencagedataAPIkey}&language=${language}`;
+    let data;
+    try {
+      const response = await fetch(url);
+      data = await response.json();
+    } catch (e) {
+      console.error(e);
+    }
+    processOpenCageDataResponse(data);
+  }
+
   function showImage(imageURL) {
     const image = document.querySelector('.image');
     image.style.backgroundImage = `url(${imageURL})`;
@@ -318,17 +318,17 @@ window.onload = () => {
         .map((result) => result.transcript)
         .join(' ');
 
-      city.value = transcript;
-      await getLocationByCity(city.value);
+      cityInput.value = transcript;
+      await getLocationByCity(cityInput.value);
     });
     recognition.addEventListener('end', recognition.start);
     recognition.start();
   }
 
-  city.addEventListener('click', () => recogniseSpeech());
-  city.addEventListener('keydown', (event) => {
+  cityInput.addEventListener('click', () => recogniseSpeech());
+  cityInput.addEventListener('keydown', (event) => {
     if (event.keyCode === 13) {
-      getLocationByCity(city.value);
+      getLocationByCity(cityInput.value);
     }
   });
 
@@ -343,7 +343,7 @@ window.onload = () => {
   languageButton.addEventListener('change', () => { languageHandler(); });
   languageButton.value = language.toUpperCase();
 
-  searchCityButton.addEventListener('click', () => { getLocationByCity(city.value); city.value = ''; });
+  searchCityButton.addEventListener('click', () => { getLocationByCity(cityInput.value); cityInput.value = ''; });
 
   fahrButton.addEventListener('click', async () => { temperatureType = 'fahrenheit'; showCurrentForecast(await getForecast({ latitude, longitude })); });
   celcButton.addEventListener('click', async () => { temperatureType = 'celcius'; showCurrentForecast(await getForecast({ latitude, longitude })); });
