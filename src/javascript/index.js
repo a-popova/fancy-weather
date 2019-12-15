@@ -9,7 +9,7 @@ import Translator from './translator';
 let latitude;
 let longitude;
 let timezone = 'Europe/Minsk';
-let forecast;
+let forecast = {};
 let locationInfo;
 const seasons = ['winter', 'winter', 'spring', 'spring', 'spring', 'summer', 'summer', 'summer', 'autumn', 'autumn', 'autumn', 'winter'];
 let language = localStorage.getItem('lang') || 'en';
@@ -18,9 +18,9 @@ let temperatureType = localStorage.getItem('temp') || 'celcius';
 window.onload = () => {
   const wrapper = document.querySelector('.wrapper');
   wrapper.innerHTML += markup;
-  const image = document.createElement('div');
-  document.body.prepend(image);
-  image.classList.add('image');
+  const imageWrapper = document.createElement('div');
+  document.body.prepend(imageWrapper);
+  imageWrapper.classList.add('image');
 
   const cityInput = document.querySelector('.header--cityInput input[name=city]');
   const searchCityButton = document.querySelector('.header--cityInput input[class=search]');
@@ -34,9 +34,9 @@ window.onload = () => {
     zoom: 10,
   });
 
-  function extractDate(timezone) {
+  function extractDate(timezoneFetched) {
     const utcDate = new Date();
-    const localDate = utcDate.toLocaleString('be', { localeMatcher: 'best fit', timeZone: `${timezone}` });
+    const localDate = utcDate.toLocaleString('be', { localeMatcher: 'best fit', timeZone: `${timezoneFetched}` });
 
     const utcDateString = utcDate.toString();
     const utcDateArr = utcDateString.split(' ');
@@ -89,13 +89,13 @@ window.onload = () => {
     longitude = APIResponse.results[0].geometry.lng;
   }
 
-  function updateMap(locationInfo) {
-    map.setCenter([locationInfo.longitude, locationInfo.latitude]);
+  function updateMap(locationInfoObj) {
+    map.setCenter([locationInfoObj.longitude, locationInfoObj.latitude]);
     const translator = new Translator(language);
     const latName = translator.get('lat');
     const lonName = translator.get('lon');
-    document.querySelector('.latitude').innerHTML = `${latName}${Math.trunc(locationInfo.latitude)}°`;
-    document.querySelector('.longitude').innerHTML = `${lonName}${Math.trunc(locationInfo.longitude)}'`;
+    document.querySelector('.latitude').innerHTML = `${latName}${Math.trunc(locationInfoObj.latitude)}°`;
+    document.querySelector('.longitude').innerHTML = `${lonName}${Math.trunc(locationInfoObj.longitude)}'`;
   }
 
   function renderLocation(APIResponse) {
@@ -140,42 +140,15 @@ window.onload = () => {
     });
   }
 
-  function showCurrentForecast(forecast) {
-    document.querySelector('.currentWeather--temperature').innerHTML = forecast.temperature;
-    document.querySelector('.description--summary').innerHTML = forecast.summary;
-    document.querySelector('.description--apparentTemp').innerHTML = forecast.apparentTemp;
-    document.querySelector('.description--wind').innerHTML = forecast.wind;
-    document.querySelector('.description--humidity').innerHTML = forecast.humidity;
-    document.querySelector('.currentWeather--image').style.backgroundImage = forecast.iconURL;
-    renderDaysForecast(forecast.days);
+  function showCurrentForecast(forecastObj) {
+    document.querySelector('.currentWeather--temperature').innerHTML = forecastObj.temperature;
+    document.querySelector('.description--summary').innerHTML = forecastObj.summary;
+    document.querySelector('.description--apparentTemp').innerHTML = forecastObj.apparentTemp;
+    document.querySelector('.description--wind').innerHTML = forecastObj.wind;
+    document.querySelector('.description--humidity').innerHTML = forecastObj.humidity;
+    document.querySelector('.currentWeather--image').style.backgroundImage = forecastObj.iconURL;
+    renderDaysForecast(forecastObj.days);
   }
-
-  async function getPositionByIP() {
-    const url = `https://ipinfo.io/json?token=${ipinfoToken}`;
-    let data;
-    try {
-      const response = await fetch(url);
-      data = await response.json();
-    } catch (e) {
-      console.error(e);
-    }
-    const { city } = data;
-
-    getLocationByCity(city);
-  }
-
-  async function success(pos) {
-    if (pos) {
-      const crd = pos.coords;
-      latitude = crd.latitude.toFixed(2);
-      longitude = crd.longitude.toFixed(2);
-      await getLocationByCoordinates(latitude, longitude);
-    } else {
-      getPositionByIP();
-    }
-  }
-
-  navigator.geolocation.getCurrentPosition(success);
 
   function highlightTempButton(trueButton, falseButton) {
     falseButton.classList.remove('highlighted');
@@ -192,7 +165,6 @@ window.onload = () => {
     const wind = translator.get('wind');
     const humidity = translator.get('hum');
 
-    const forecast = {};
     forecast.temperature = `${Math.round(APIResponse.currently.temperature)}°`;
     forecast.summary = `${APIResponse.currently.summary}`;
     forecast.apparentTemp = `${tempFeels}${Math.round(APIResponse.currently.apparentTemperature)}°`;
@@ -205,9 +177,9 @@ window.onload = () => {
     return forecast;
   }
 
-  async function getForecast(locationInfo) {
+  async function getForecast(locationInfoObj) {
     const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    let targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${locationInfo.latitude},${locationInfo.longitude}?lang=${language}`;
+    let targetUrl = `https://api.darksky.net/forecast/${darkskyAPIkey}/${locationInfoObj.latitude},${locationInfoObj.longitude}?lang=${language}`;
     if (temperatureType === 'celcius') {
       targetUrl += '&units=si';
       highlightTempButton(celcButton, fahrButton);
@@ -233,10 +205,10 @@ window.onload = () => {
     return image.url_o || image.url_h || `https://farm${image.farm}.staticflickr.com/${image.server}/${image.id}_${image.secret}_b.jpg`;
   }
 
-  async function fetchFlickrImage(location, forecast) {
+  async function fetchFlickrImage(location, forecastObj) {
     const baseUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${flickrAPIkey}`;
     const constantParams = '&geo_context=2&format=json&nojsoncallback=1&extras=url_o';
-    const customParams = `&lat=${location.latitude}&lon=${location.longitude}&tags=${location.partOfDay},${location.season},${forecast.weatherState}`;
+    const customParams = `&lat=${location.latitude}&lon=${location.longitude}&tags=${location.partOfDay},${location.season},${forecastObj.weatherState}`;
     const url = baseUrl + customParams + constantParams;
 
     try {
@@ -247,8 +219,18 @@ window.onload = () => {
         backgroundImageUrl: extractImageUrl(data),
       };
     } catch (e) {
-      console.error(e);
+      return console.error(e);
     }
+  }
+
+  function showImage(imageURL) {
+    const image = document.querySelector('.image');
+    image.style.backgroundImage = `url(${imageURL})`;
+  }
+
+  async function loadImage() {
+    const imageData = await fetchFlickrImage(locationInfo, forecast);
+    showImage(imageData.backgroundImageUrl);
   }
 
   async function processOpenCageDataResponse(APIResponse) {
@@ -286,6 +268,20 @@ window.onload = () => {
     processOpenCageDataResponse(data);
   }
 
+  async function getPositionByIP() {
+    const url = `https://ipinfo.io/json?token=${ipinfoToken}`;
+    let data;
+    try {
+      const response = await fetch(url);
+      data = await response.json();
+    } catch (e) {
+      console.error(e);
+    }
+    const { city } = data;
+
+    getLocationByCity(city);
+  }
+
   async function getLocationByCoordinates(lat, lon) {
     const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${opencagedataAPIkey}&language=${language}`;
     let data;
@@ -298,15 +294,18 @@ window.onload = () => {
     processOpenCageDataResponse(data);
   }
 
-  function showImage(imageURL) {
-    const image = document.querySelector('.image');
-    image.style.backgroundImage = `url(${imageURL})`;
+  async function success(pos) {
+    if (pos) {
+      const crd = pos.coords;
+      latitude = crd.latitude.toFixed(2);
+      longitude = crd.longitude.toFixed(2);
+      await getLocationByCoordinates(latitude, longitude);
+    } else {
+      getPositionByIP();
+    }
   }
 
-  async function loadImage() {
-    const imageData = await fetchFlickrImage(locationInfo, forecast);
-    showImage(imageData.backgroundImageUrl);
-  }
+  navigator.geolocation.getCurrentPosition(success);
 
   function recogniseSpeech() {
     window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
