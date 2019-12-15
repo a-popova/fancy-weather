@@ -387,6 +387,10 @@
     margin-right: 30%;
   }
 
+  .main .column.left .currentWeather--description {
+    font-size: 20px;
+  }
+
   .main .column.left .weatherForecast {
     display: block;
   }
