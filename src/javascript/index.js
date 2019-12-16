@@ -299,17 +299,13 @@ window.onload = () => {
   }
 
   async function success(pos) {
-    if (pos) {
-      const crd = pos.coords;
-      latitude = crd.latitude.toFixed(2);
-      longitude = crd.longitude.toFixed(2);
-      await getLocationByCoordinates(latitude, longitude);
-    } else {
-      getPositionByIP();
-    }
+    const crd = pos.coords;
+    latitude = crd.latitude.toFixed(2);
+    longitude = crd.longitude.toFixed(2);
+    await getLocationByCoordinates(latitude, longitude);
   }
 
-  navigator.geolocation.getCurrentPosition(success);
+  navigator.geolocation.getCurrentPosition(success, getPositionByIP);
 
   function recogniseSpeech() {
     window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
