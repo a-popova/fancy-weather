@@ -129,7 +129,7 @@ window.onload = () => {
 
   function renderWeatherIcons(day, index) {
     const iconURL = icons[day.icon];
-    document.querySelector(`.weatherForecast--day${index}--image`).style.backgroundImage = `url(/dist/${iconURL})`;
+    document.querySelector(`.weatherForecast--day${index}--image`).style.backgroundImage = `url(dist/${iconURL})`;
   }
 
   function renderDaysForecast(days) {
@@ -172,7 +172,7 @@ window.onload = () => {
     forecast.humidity = `${humidity}${Math.round(APIResponse.currently.humidity * 100)}%`;
     forecast.weatherState = APIResponse.currently.icon;
     const iconURL = icons[forecast.weatherState];
-    forecast.iconURL = `url(/dist/${iconURL})`;
+    forecast.iconURL = `url(dist/${iconURL})`;
     forecast.days = extract3DayForecast(APIResponse);
     return forecast;
   }
