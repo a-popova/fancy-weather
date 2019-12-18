@@ -235,7 +235,10 @@ window.onload = () => {
 
   async function processOpenCageDataResponse(APIResponse) {
     clearInterval(updateTime);
-    updateCoordinates(APIResponse);
+    if (APIResponse.results.length === 0) {
+      window.alert("Invalid input. Please, try again!")
+    } else {
+      updateCoordinates(APIResponse);
 
     timezone = APIResponse.results[0].annotations.timezone.name;
     locationInfo = {
@@ -254,6 +257,7 @@ window.onload = () => {
     showCurrentForecast(forecast);
     renderLocation(APIResponse);
     updateMap(locationInfo);
+    }
   }
 
   async function getLocationByCity(cityInputValue) {

@@ -145,7 +145,7 @@ body {
             position: relative;
             &::before {
                 content: '';
-                background-image: url('../images/voice.png');
+                background-image: url('../images/mic_none-24px.svg');
                 background-size: cover;
                 height: 30px;
                 left: 0;
@@ -154,6 +154,9 @@ body {
                 top: calc(15%);
                 width: 30px;
                 z-index: 1; 
+                &:hover {
+                    background-image: url('../images/mic-24px.svg');
+                }
             }
         }
         input[type=text] {

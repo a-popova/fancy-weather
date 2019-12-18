@@ -497,7 +497,7 @@ body {
 }
 .header--cityInput .speech::before {
   content: "";
-  background-image: url(images/9a22ddb3c86e37c48ba494da2d92a1a7.png);
+  background-image: url(images/d352128bbb6f8f7705e6ce25276fcbfc.svg);
   background-size: cover;
   height: 30px;
   left: 0;
@@ -506,6 +506,9 @@ body {
   top: calc(15%);
   width: 30px;
   z-index: 1;
+}
+.header--cityInput .speech::before:hover {
+  background-image: url(images/c787772c5394be8f1dcb4de264942967.svg);
 }
 .header--cityInput input[type=text] {
   position: relative;
