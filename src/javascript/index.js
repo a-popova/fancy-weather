@@ -236,27 +236,27 @@ window.onload = () => {
   async function processOpenCageDataResponse(APIResponse) {
     clearInterval(updateTime);
     if (APIResponse.results.length === 0) {
-      window.alert("Invalid input. Please, try again!")
+      window.alert('Invalid input. Please, try again!');
     } else {
       updateCoordinates(APIResponse);
 
-    timezone = APIResponse.results[0].annotations.timezone.name;
-    locationInfo = {
-      ...extractDate(timezone),
-      latitude,
-      longitude,
-    };
+      timezone = APIResponse.results[0].annotations.timezone.name;
+      locationInfo = {
+        ...extractDate(timezone),
+        latitude,
+        longitude,
+      };
 
-    forecast = await getForecast(locationInfo);
-    const imageData = await fetchFlickrImage(locationInfo, forecast);
-    await showImage(imageData.backgroundImageUrl);
-    updateTime = setInterval(() => {
-      const dateInfo = extractDate(timezone);
-      showDate(dateInfo.utcDateArr, dateInfo.localDateArr);
-    }, 1000);
-    showCurrentForecast(forecast);
-    renderLocation(APIResponse);
-    updateMap(locationInfo);
+      forecast = await getForecast(locationInfo);
+      const imageData = await fetchFlickrImage(locationInfo, forecast);
+      await showImage(imageData.backgroundImageUrl);
+      updateTime = setInterval(() => {
+        const dateInfo = extractDate(timezone);
+        showDate(dateInfo.utcDateArr, dateInfo.localDateArr);
+      }, 1000);
+      showCurrentForecast(forecast);
+      renderLocation(APIResponse);
+      updateMap(locationInfo);
     }
   }
 
